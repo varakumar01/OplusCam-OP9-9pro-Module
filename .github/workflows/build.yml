@@ -28,8 +28,13 @@ jobs:
 
       - name: Install tools
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q busybox clang lld llvm libc++-dev libc++abi-dev apksigner
+          # The runner image has clang/lld/llvm 18, busybox and the Android
+          # SDK's apksigner; only the libc++ headers are missing. The package
+          # index is refreshed only if the image's copy is too old.
+          echo "/usr/lib/llvm-18/bin" >> "$GITHUB_PATH"
+          ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1 >> "$GITHUB_PATH"
+          install="sudo apt-get install -y -q --no-install-recommends libc++-18-dev libc++abi-18-dev"
+          $install || { sudo apt-get update -q && $install; }
           python3 -m pip install --quiet pytest unicorn
 
       - name: Cache pinned sources
