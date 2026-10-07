@@ -59,6 +59,14 @@ a finished ZIP against its payload allowlist and checksums.
 
 - [varakumar01](https://github.com/varakumar01)
 
-The camera and its native libraries are proprietary OEM binaries. This
-repository holds packaging and build scripts; it does not claim those
-binaries are open source or freely redistributable.
+## License
+
+The scripts and module files in this repository are licensed under the
+[GNU General Public License v3.0](LICENSE). Three files carry their own SPDX
+header and keep that license: `native/ksu_visibility.c` and
+`tests/visibility_policy_device.c` (GPL-2.0-only), and
+`native/uah-client/uah_client.c` (Apache-2.0).
+
+The camera and its native libraries are proprietary OEM binaries. They are
+not in this repository and the license above does not cover them; nothing
+here claims they are open source or freely redistributable.
