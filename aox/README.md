@@ -68,6 +68,7 @@ stays unless the change was made against that exact file.
 | AAC encoder cap raised to 288 kbps | The media profiles file is edited and bind-mounted in post-fs-data. |
 | `liboplus-uah-client.so`: camera scene hints sent to the power HAL | Built from `native/uah-client`. Never replaces a stock OEM client. |
 | sepolicy: camera provider as power HAL client and wakelock holder; `/proc/OIS` label | `sepolicy.rule` |
+| sepolicy: the app's access to `vendor_file` libraries, `/data/vendor/camera*`, the camera provider and its postproc service, osense | `sepolicy.rule`, for `priv_app` and `priv_app_36`. Every app in those domains gets it. |
 | `/data/vendor/camera_process` for Live Photo | Created in post-fs-data. |
 
 Reinstalling or updating the module: files the running copy already overlays
@@ -83,7 +84,9 @@ These need a ROM built from the aox trees:
   Without it Movie mode LOG / HDR can crash.
 - the thermal client group on the camera provider service (init reads its rc
   files before modules are mounted).
-- running the app in its own `opluscamera_app` SELinux domain.
+- running the app in its own `opluscamera_app` SELinux domain, and the
+  `same_process_hal_file` label on the ROM's own camera libraries; the rules
+  above stand in for both.
 
 ## Known faults of 5.045.451 on these phones
 
