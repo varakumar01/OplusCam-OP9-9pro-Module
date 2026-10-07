@@ -26,14 +26,14 @@ allow hal_camera_default system_suspend_server fd use
 # app runs as a plain privileged app (priv_app, or priv_app_36 on Android 17)
 # and the libraries it loads from /vendor and /odm keep the vendor_file
 # label. These rules are shared by every app in those domains.
-allow priv_app vendor_file file { read open getattr map }
+allow priv_app vendor_file file { read open getattr map execute }
 allow priv_app vendor_camera_data_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
 allow priv_app vendor_camera_data_file file { create read write open getattr setattr append unlink rename ioctl lock map }
 allow priv_app vendor_hal_camera_postproc_hwservice hwservice_manager find
 allow priv_app hal_camera_default binder { call transfer }
 allow priv_app hal_oplus_osense_aidl_service service_manager find
 allow priv_app qemu_hw_prop file { read open getattr map }
-allow priv_app_36 vendor_file file { read open getattr map }
+allow priv_app_36 vendor_file file { read open getattr map execute }
 allow priv_app_36 vendor_camera_data_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
 allow priv_app_36 vendor_camera_data_file file { create read write open getattr setattr append unlink rename ioctl lock map }
 allow priv_app_36 vendor_hal_camera_postproc_hwservice hwservice_manager find

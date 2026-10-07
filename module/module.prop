@@ -1,6 +1,6 @@
 id=ooscamera_op9
 name=OOS Camera — OnePlus 9 / 9 Pro
-version=2.0.3
-versionCode=203
+version=2.0.4
+versionCode=204
 author=varakumar01
 description=OOS Camera 5.045.451 for OnePlus 9 / 9 Pro on Android 16+ ROMs with oplus-fwk, with the aox camera fixes (libraries, configs, power hints) applied where the ROM lacks them. Skips the app when the ROM already ships it.
