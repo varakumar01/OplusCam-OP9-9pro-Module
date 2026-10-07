@@ -165,7 +165,7 @@ def audit(archive_path, identifiers):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("archive", nargs="?", type=pathlib.Path,
-                        default=ROOT / "build/ooscamera-op9.zip")
+                        default=ROOT / "build/OplusCamera-OP9.zip")
     parser.add_argument("--identifiers-file", type=pathlib.Path,
                         help="Private UTF-8 file with one known identifier per line")
     parser.add_argument("--report", type=pathlib.Path)

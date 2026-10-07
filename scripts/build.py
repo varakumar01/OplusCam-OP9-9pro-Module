@@ -354,7 +354,7 @@ def main():
     version = properties["version"]
     if not re.fullmatch(r"[0-9]+(?:\.[0-9]+)*(?:-[A-Za-z0-9.-]+)?", version):
         raise SystemExit("Module version is not suitable for an artifact filename")
-    output = output_dir / f"ooscamera-op9-{version}.zip"
+    output = output_dir / f"OplusCamera-OP9-{version}.zip"
     temporary = output.with_suffix(".zip.tmp")
     with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in sorted(stage.rglob("*")):
@@ -367,7 +367,7 @@ def main():
     digest = hashlib.sha256(output.read_bytes()).hexdigest()
     output.with_suffix(".zip.sha256").write_text(f"{digest}  {output.name}\n")
     # Preserve the existing local install/audit entry point.
-    latest = output_dir / "ooscamera-op9.zip"
+    latest = output_dir / "OplusCamera-OP9.zip"
     latest.unlink(missing_ok=True)
     latest.symlink_to(output.name)
     latest.with_suffix(".zip.sha256").write_text(f"{digest}  {latest.name}\n")

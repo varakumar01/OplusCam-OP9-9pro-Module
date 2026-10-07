@@ -1,4 +1,4 @@
-# OOS Camera for the OnePlus 9 / 9 Pro
+# Oplus Camera for the OnePlus 9 / 9 Pro
 
 A KernelSU Next module that installs **OplusCamera 5.045.451** on a OnePlus 9
 (`lemonade`) or 9 Pro (`lemonadep`) running an Android 16+ ROM that has
@@ -18,8 +18,8 @@ on a phone yet; the 9 Pro path has never run on a 9 Pro.
 
 ## Install
 
-In KernelSU Next: **Modules → Install**, pick `ooscamera-op9-<version>.zip`,
-reboot. Open OOS Camera and grant its permissions. In **App Profile → OOS
+In KernelSU Next: **Modules → Install**, pick `OplusCamera-OP9-<version>.zip`,
+reboot. Open Oplus Camera and grant its permissions. In **App Profile → OOS
 Camera** turn **Umount modules** off and leave root access off: the camera
 has to see the module's files. No Mountify or other mounting module is
 needed.

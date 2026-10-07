@@ -87,11 +87,11 @@ def main():
             print(result.stderr)
         raise SystemExit(result.returncode)
     elif args.command == "install":
-        archive = pathlib.Path(args.argument or ROOT / "build" / "ooscamera-op9.zip").resolve()
+        archive = pathlib.Path(args.argument or ROOT / "build" / "OplusCamera-OP9.zip").resolve()
         if not archive.is_file():
             parser.error(f"Module archive missing: {archive}")
-        adb("push", str(archive), "/data/local/tmp/ooscamera-op9.zip")
-        result = root("/data/adb/ksud module install /data/local/tmp/ooscamera-op9.zip",
+        adb("push", str(archive), "/data/local/tmp/OplusCamera-OP9.zip")
+        result = root("/data/adb/ksud module install /data/local/tmp/OplusCamera-OP9.zip",
                       check=False, timeout=240)
         print(result.stdout)
         if result.stderr:

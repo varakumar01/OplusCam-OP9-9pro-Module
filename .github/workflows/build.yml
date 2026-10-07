@@ -65,18 +65,18 @@ jobs:
           cd ..
           version=$(sed -n 's/^version=//p' module/module.prop)
           echo "VERSION=$version" >> "$GITHUB_ENV"
-          echo "ZIP=ooscamera-op9-$version-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-          cat build/ooscamera-op9-*.zip.sha256
+          echo "ZIP=OplusCamera-OP9-$version-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          cat build/OplusCamera-OP9-*.zip.sha256
 
       - name: Upload module
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP }}
           path: |
-            build/ooscamera-op9-*.zip
-            build/ooscamera-op9-*.zip.sha256
-            !build/ooscamera-op9.zip
-            !build/ooscamera-op9.zip.sha256
+            build/OplusCamera-OP9-*.zip
+            build/OplusCamera-OP9-*.zip.sha256
+            !build/OplusCamera-OP9.zip
+            !build/OplusCamera-OP9.zip.sha256
           if-no-files-found: error
           retention-days: 30
 
@@ -92,12 +92,12 @@ jobs:
             echo "OplusCamera 5.045.451 with the aox camera changes, built from the pinned"
             echo "aox trees. Install in KernelSU Next and reboot. On a ROM that already"
             echo "ships this camera (or a newer one) only the fixes are applied. Set"
-            echo "App Profile → OOS Camera → Umount modules OFF. What the installer"
+            echo "App Profile → Oplus Camera → Umount modules OFF. What the installer"
             echo "decided is in /data/adb/modules/ooscamera_op9/aox.log."
             echo
-            echo "SHA-256: \`$(cut -d ' ' -f 1 build/ooscamera-op9-$VERSION.zip.sha256)\`"
+            echo "SHA-256: \`$(cut -d ' ' -f 1 build/OplusCamera-OP9-$VERSION.zip.sha256)\`"
           } > release-notes.md
           gh release create "$tag" \
-            "build/ooscamera-op9-$VERSION.zip" "build/ooscamera-op9-$VERSION.zip.sha256" \
-            --target "$GITHUB_SHA" --title "OOS Camera $VERSION (build $GITHUB_RUN_NUMBER)" \
+            "build/OplusCamera-OP9-$VERSION.zip" "build/OplusCamera-OP9-$VERSION.zip.sha256" \
+            --target "$GITHUB_SHA" --title "Oplus Camera $VERSION (build $GITHUB_RUN_NUMBER)" \
             --notes-file release-notes.md --prerelease

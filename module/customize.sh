@@ -52,7 +52,8 @@ if [ -f "$MODPATH/gralloc32-source.json" ]; then
     esac
     ui_print "Matching ARMv7 graphics trial for media services."
 fi
-ui_print "Installing OOS Camera for the OnePlus 9 / 9 Pro."
+ui_print "Installing Oplus Camera $(cat "$MODPATH/aox/app-version.txt" 2>/dev/null) for the OnePlus 9 / 9 Pro."
+ui_print "Module version $(sed -n 's/^version=//p' "$MODPATH/module.prop")."
 ui_print "Standalone mounting: Mountify is not required."
 ui_print "A reboot is required for system permissions and library discovery."
 if [ -f "$MODPATH/ksu-visibility" ]; then
@@ -100,7 +101,7 @@ if ! camera_prepare_image; then
     cp "$MODPATH/aox.log" /data/local/tmp/ooscamera-install.log 2>/dev/null
     abort "Camera filesystem preparation failed; installation cancelled."
 fi
-ui_print "Ready. Reboot, open OOS Camera and grant its permissions."
+ui_print "Ready. Reboot, open Oplus Camera and grant its permissions."
 if [ -f "$MODPATH/ksu-visibility" ]; then
     ui_print "Camera and launcher visibility will be configured automatically."
 else
