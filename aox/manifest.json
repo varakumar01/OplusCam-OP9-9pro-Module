@@ -8,11 +8,11 @@
     },
     "vendor": {
       "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonade",
-      "revision": "2f8123369f08ac3952005e5eb30bad4ca272b3d3"
+      "revision": "5b18d5b7fcc9271bea10332602b2d7ae03aeab0d"
     },
     "vendor_pro": {
       "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonadep",
-      "revision": "ea3e9e8daa58933108205036392227f5f197de93"
+      "revision": "318d145fdd4517d1f79ef9226db77f76cef147d6"
     },
     "device": {
       "repository": "https://github.com/varakumar01/android_device_oneplus_lemonade",

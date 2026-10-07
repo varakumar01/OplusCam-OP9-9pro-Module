@@ -58,6 +58,9 @@ tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.master.mode.vign
 tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.surface.release.support|Byte|1|*|1
 tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.export.super.text.support|Byte|1|*|1
 tag|odm/etc/camera/config/oplus_camera_config|com.oplus.video.4k.track.focus.support|Byte|1|*|1
+# encode normal-size HEIF photos in the app, not in APS (Photo, Portrait and
+# XPAN HEIF came out as a few hundred bytes)
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.only.high.picture.size.heif.in.aps|Byte|1|*|1
 
 # keep the main sensor streaming while the zoom moves below 1x
 only|lemonade|ini|odm/etc/camera/CameraHWConfiguration.config|SatSmoothZoom|closeSlaveThresholdTime|-|1

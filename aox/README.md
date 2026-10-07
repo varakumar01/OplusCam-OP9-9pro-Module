@@ -61,7 +61,7 @@ stays unless the change was made against that exact file.
 | 32-bit `libcamxexternalformatutils.so` | Added when `/vendor/lib` lacks it. |
 | ArcSoft HVX skels with their original SONAME | Replace only the SONAME-rewritten copies. |
 | `camera_unit_feature_config.protobuf` (120fps not forcing 4K, Live Photo) | One build per phone; replaces only the stock file or the earlier aox one. |
-| `oplus_camera_config`: 44 tags (42 on the 9 Pro) | Install-time edits; missing tags are appended. |
+| `oplus_camera_config`: 45 tags (43 on the 9 Pro) | Install-time edits; missing tags are appended. |
 | `CameraHWConfiguration.config`: ultrawide active map; on the 9 also the main sensor kept streaming below 1x and 60fps zoom down to the ultrawide | Install-time edits; a value is changed only if it is still the stock one. |
 | `camera_unit_config`: the APS JNI version; on the 9 `video_120fps` in rear_main's video table | A key insert, and two exact blocks applied together or not at all. |
 | AAC encoder cap raised to 288 kbps | The media profiles file is edited and bind-mounted in post-fs-data. |
