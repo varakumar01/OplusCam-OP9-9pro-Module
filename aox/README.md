@@ -1,55 +1,104 @@
-# aox camera changes
+# What the module carries from the aox branch
 
-This module carries the camera work from the `aox` branches, 2026-09-30 to 2026-10-06. It is meant for OnePlus 9 / 9 Pro ROMs that were not built from those branches. Only camera changes are included. The aox camera work is by
-[varakumar01](https://github.com/varakumar01).
+Camera work from the `aox` branches of the OnePlus 9 / 9 Pro trees, for ROMs
+that were not built from them. The exact revisions and every file's SHA-256
+are in [manifest.json](manifest.json); `scripts/gen_manifest.py` regenerates
+it from local clones.
 
-| Repository (aox) | Pinned revision |
+| Tree | What is taken |
 |---|---|
-| varakumar01/proprietary_vendor_oneplus_lemonade | `909a41d` (base `f7ae875`) |
-| varakumar01/android_device_oneplus_lemonade | `09a7223` |
-| varakumar01/android_hardware_oplus | `fc0d19d` |
-| varakumar01/android_device_oneplus_sm8350-common | `86c49b7` |
+| varakumar01/vendor_oplus_camera | OplusCamera 5.045.451, both unit SDK jars, the support wrapper, 39 JNI libraries |
+| varakumar01/proprietary_vendor_oneplus_lemonade, `_lemonadep` | `/odm` libraries, filter tables, models, the feature protobuf; the config changes as edits |
+| varakumar01/android_hardware_oplus | `oplus-fwk`, the uah client, camera sepolicy |
+| varakumar01/android_device_oneplus_lemonade | the AAC encoder cap |
 
-Pairs of commits that were later reverted cancel out and are left out: the urcc HAL stack, 4K/120fps exclusivity and 4K60 main-sensor-only.
+The APK already contains the four aox app patches: real-time 120fps at
+720p/1080p/4K, Ultra Night Video recorded from the processed preview, the
+thumbnail opening Glimpse, and Edit open to any editor.
 
-## What the module applies
+## The camera app
 
-Every change is conditional, and the installer logs each decision to `/data/adb/modules/ooscamera_op9/aox.log`. If the module already ships a file or sets a value, the module's version wins. If the device already has a file, the device copy stays unless the change was made against that exact file.
+The installer asks the package manager for the system copy of
+`com.oplus.camera`:
 
-| Change | Commits | How it is applied |
-|---|---|---|
-| 34 camera algorithm/JNI libraries (Anc*, 2DSlender, aisd, FDClite, SuperText/XDoc/YTCommon, npu, long exposure, ui-oplus, …) | vendor 2b2f3d2, 02d1aaf, 6b5994f, 9beeb6a, 3ddae90 | Added only when `/odm/lib64` lacks them, and only if every DT_NEEDED library exists on the device. A library whose dependency is missing is dropped, and so is anything that depends on it. |
-| `libnightvision.so` with luma spatial noise reduction | vendor 909a41d, device 09a7223 | Added when missing. Replaces the device copy only if that copy is the unpatched stock build. |
-| `libEIS.so` linked against the stock `libui-oplus.so` | vendor 3ddae90, device 25d682a | Replaces only the stock `libEIS.so` this change was made from. |
-| 32-bit `libcamxexternalformatutils.so` | vendor 00e6950 | Added when `/vendor/lib` lacks it. |
-| ArcSoft HVX skels with their original SONAME | vendor d1fd799 | Replace only the SONAME-rewritten copies. Uses a new `/odm/lib/rfsa/adsp` overlay, which is mounted only when needed. |
-| `camera_unit_feature_config.protobuf` (120fps not forcing 4K) | vendor 907126e | Replaces only the exact file the change was made from. |
-| `oplus_camera_config`: 4K60 advertisement, 4K focus tracking, Text Scanner mode, recorder surface release | vendor 1acc28e, 74562fa, 86876a2, 719c4b4 | Install-time edits of the module's copy, else the device's copy. Missing tags are appended. |
-| `oplus_camera_aps_config`: hardware JPEG encoder | vendor dcc919d | Install-time edit. |
-| `CameraHWConfiguration.config`: keep main sensor streaming below 1x, ultrawide active map, 60fps zoom down to the ultrawide | vendor 66d4b9a | Install-time edits. A value is changed only if it is still the stock one. The 60fps minimum zoom follows this device's own video zoom range. |
-| `camera_unit_config`: `video_120fps` mapped to constrained high speed and added to rear_main's video table | vendor 5b514cd, d954b5c | Exact blocks, applied together or not at all. |
-| AAC encoder cap raised to 288 kbps (audio track of camera video) | device 7c8d1f0 | The device's media profiles file is edited and bind-mounted in post-fs-data. |
-| `liboplus-uah-client.so`: camera scene hints sent to the power HAL | hardware 238ddc9, common 2277dd9 | Built from `native/uah-client`. Used when the device has no client or has the LineageOS no-op stub. A stock OEM client, which links libuahcore/liburcccore, is never replaced. |
-| sepolicy: `hal_camera_default` as a power HAL client; `/proc/OIS` labelled `vendor_proc_camera` | hardware fc0d19d, 96d618c | `sepolicy.rule` |
+| ROM state | What happens |
+|---|---|
+| no system OplusCamera | the module installs 5.045.451 in `/system_ext/priv-app/OplusCamera` |
+| 5.045.451 or newer | the ROM's app, SDK jars and paired libraries stay; only the fixes below apply |
+| older | the module's APK is overlaid at the ROM's own path and file name (`/system`, `/system_ext` or `/product` `priv-app`; anywhere else stops the install) |
 
-The edit definitions live in `module/aox/edits.txt` and `module/aox/blocks/`. The pinned library list is `aox/manifest.json`.
+The module's APK is signed with the public AOSP platform test key. On a
+test-keys ROM that makes it platform-signed, as it is in an aox build.
 
-## Camera changes a module cannot carry
+Four `/odm/lib64` libraries are paired with the 5.x app and replace the
+device copies whenever the module's app is in use: `libAlgoInterface`,
+`libAlgoProcess`, `libPreviewDecisionOld`, `libFilterWrapper`. If one of them
+cannot be installed (a DT_NEEDED library missing on the ROM), the install
+stops rather than leaving an app that cannot start.
 
-These need a ROM rebuild:
-- camera-provider init override adding group `oem_2907` for the thermal-engine sockets (common 1e69579). init reads its rc files before modules are mounted.
-- `frameworks_base` camera2 high-speed fps range fix (common c365a60). This is a boot JAR and differs per ROM.
-- `frameworks_native` libnativewindow P010_VENUS chroma planes (common 86c49b7). This is a system library that differs per ROM.
+## oplus-fwk
 
-The branches' non-camera work (display, audio HAL, settings, diagnostics, apps) is out of scope here.
+5.x needs classes that older `oplus-fwk.jar` builds lack. The installer looks
+for three of them in the ROM's `/system/framework/oplus-fwk.jar`. If any is
+missing, the module overlays its own jar, built from
+`android_hardware_oplus` at the pinned revision. This replaces a boot jar:
+the first boot is slower, and another app on that ROM that relies on a class
+only its own `oplus-fwk` had would break. If that boot does not complete,
+the module disables itself on the next one.
+
+## Fixes
+
+Every change is conditional and logged to
+`/data/adb/modules/ooscamera_op9/aox.log`. A file the device already has
+stays unless the change was made against that exact file.
+
+| Change | How it is applied |
+|---|---|
+| 37 camera algorithm libraries in `/odm/lib64` (Anc*, 2DSlender, aisd, FDClite, SuperText/XDoc/YTCommon, npu, long exposure, ui-oplus, aideblur, msnativefilter, extendfile, …) | Added when missing, and only if every DT_NEEDED library exists. A library whose dependency is missing is dropped, and so is anything that depends on it. |
+| 68 `meishe_lut` and 6 `filters_lut` tables, the self-bokeh model | Added when missing. |
+| `libnightvision.so` with luma spatial noise reduction | Added when missing; replaces only the unpatched stock build. |
+| `libEIS.so` linked against the stock `libui-oplus.so` | Replaces only the stock `libEIS.so`. |
+| 32-bit `libcamxexternalformatutils.so` | Added when `/vendor/lib` lacks it. |
+| ArcSoft HVX skels with their original SONAME | Replace only the SONAME-rewritten copies. |
+| `camera_unit_feature_config.protobuf` (120fps not forcing 4K, Live Photo) | One build per phone; replaces only the stock file or the earlier aox one. |
+| `oplus_camera_config`: 44 tags (42 on the 9 Pro) | Install-time edits; missing tags are appended. |
+| `CameraHWConfiguration.config`: ultrawide active map; on the 9 also the main sensor kept streaming below 1x and 60fps zoom down to the ultrawide | Install-time edits; a value is changed only if it is still the stock one. |
+| `camera_unit_config`: the APS JNI version; on the 9 `video_120fps` in rear_main's video table | A key insert, and two exact blocks applied together or not at all. |
+| AAC encoder cap raised to 288 kbps | The media profiles file is edited and bind-mounted in post-fs-data. |
+| `liboplus-uah-client.so`: camera scene hints sent to the power HAL | Built from `native/uah-client`. Never replaces a stock OEM client. |
+| sepolicy: camera provider as power HAL client and wakelock holder; `/proc/OIS` label | `sepolicy.rule` |
+| `/data/vendor/camera_process` for Live Photo | Created in post-fs-data. |
+
+Reinstalling or updating the module: files the running copy already overlays
+are provided again, since the ROM's own file is hidden behind them.
+
+## What a module cannot carry
+
+These need a ROM built from the aox trees:
+- the camera2 high-speed fps range fix and the vendor-tag lookup cache in
+  `frameworks/base` (boot jar, differs per ROM). Without the first, 4K 120fps
+  may not record at 120.
+- `libnativewindow` returning chroma planes for QTI P010_VENUS buffers.
+  Without it Movie mode LOG / HDR can crash.
+- the thermal client group on the camera provider service (init reads its rc
+  files before modules are mounted).
+- running the app in its own `opluscamera_app` SELinux domain.
+
+## Known faults of 5.045.451 on these phones
+
+Seen on the OnePlus 9 with an aox build; the module does not change them:
+RAW (Master mode) saves a 0-byte file and locks the shutter; the Fresh and
+Emerald film filters save black photos; 10-bit HEIC is not usable.
 
 ## Build
 
 ```sh
-python scripts/prepare_aox.py            # fetch + verify the pinned libraries
+python scripts/prepare_aox.py                 # fetch + verify everything pinned
 sh native/uah-client/build.sh .cache/aox/liboplus-uah-client.so   # clang + ld.lld
-python scripts/build.py ... --aox-cache .cache/aox \
-  --uah-client .cache/aox/liboplus-uah-client.so
+cd scripts && python build.py --uah-client ../.cache/aox/liboplus-uah-client.so
 ```
 
-Host tests: `python scripts/prepare_aox.py --fixtures`, then `python -m pytest tests/test_aox.py`. The tests need BusyBox, plus clang/lld and host libc++ for the uah client checks.
+`build.py` needs `apksigner` (Android SDK Build Tools; `--apksigner` to point
+at it). Host tests: `python scripts/prepare_aox.py --fixtures`, then
+`python -m pytest tests`. They need BusyBox, `apksigner`, and clang/lld with
+host libc++ for the uah client checks.
