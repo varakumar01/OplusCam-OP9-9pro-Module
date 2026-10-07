@@ -1,0 +1,622 @@
+{
+  "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonade",
+  "branch": "aox-cam4",
+  "revision": "909a41d6d01def82eba4cdfd320cf3815378dbf3",
+  "base_revision": "f7ae8758b68e7213219b15a7d8fe70bf0adc2f06",
+  "window": "2026-09-30/2026-10-06",
+  "device_repository": "https://github.com/varakumar01/android_device_oneplus_lemonade",
+  "device_revision": "09a7223f9af2a9c22b4ce5ce6b5ffa2e15e4e96f",
+  "device_media_base_revision": "43e90b9ee7a54f9fc782f49ea9c6e7855790115d",
+  "device_media_revision": "7c8d1f0f01dace363ab84501fd93834aac22c81f",
+  "hardware_repository": "https://github.com/varakumar01/android_hardware_oplus",
+  "hardware_revision": "fc0d19d9377aaec0494e2d7b2671fb6696516a93",
+  "common_repository": "https://github.com/varakumar01/android_device_oneplus_sm8350-common",
+  "common_revision": "86c49b74a12090105dcd9f6242a9fa6924db8a69",
+  "module_owned": [
+    "odm/lib64/libFilterWrapper.so"
+  ],
+  "files": [
+    {
+      "path": "odm/etc/camera/config/camera_unit_feature_config.protobuf",
+      "sha256": "11119ecf589e8c7c5b928c6a93e77ec69864c9a2644dd055ca1ffd8daafb747a",
+      "size": 40518,
+      "kind": "binary-config",
+      "install": "replace",
+      "replace_sha256": [
+        "8bd91ae1afdcae05c09bbc209799a30585749c030731f0ad5eefc546b0c6c456"
+      ]
+    },
+    {
+      "path": "odm/lib/rfsa/adsp/libarcsoft_hdrplus_hvx_skel_lemonade.so",
+      "sha256": "2454a98fa11e1ebc041d377e683a3c6152e96c77a364eae854c244410ede10eb",
+      "size": 517368,
+      "kind": "adsp",
+      "install": "replace",
+      "replace_sha256": [
+        "0a74fc6e35f14faf1c7d226c12b1be10a918a7e5698d551778d7b4aa49e03726"
+      ]
+    },
+    {
+      "path": "odm/lib/rfsa/adsp/libarcsoft_portraitsn_hvx_skel_20031.so",
+      "sha256": "8495cb01b1cff399b3d32eed972b6089cf1c0fc96980cab9ebdc30a6ec1579de",
+      "size": 512152,
+      "kind": "adsp",
+      "install": "replace",
+      "replace_sha256": [
+        "daa283f932ed2cbba4183ad959137c542ef728c34879b20ffe3d09ed8e7c2625"
+      ]
+    },
+    {
+      "path": "odm/lib64/lib2DSlender.so",
+      "sha256": "8219b2475c9cce095f550d99b30f3ec767be339ca1c3f0038096a131dd55bc02",
+      "size": 8058944,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncFilter.so",
+      "sha256": "137d5221d2a28cfd9d3f08c1183067bfd1b37c8d43cb96daae612a2ebc8e77a7",
+      "size": 1186112,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncHumBokeh.so",
+      "sha256": "beceaeff4234118f6a415308caf3cdb23e7e9121eb18415414332d6bfd6e792c",
+      "size": 2910576,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libdl.so",
+        "libz.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncHumBokehPost.so",
+      "sha256": "71e1cd53895b39f4f85e92af7b3fcd4a126afa70fe5cd12da5bf3708705e4070",
+      "size": 2910576,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libdl.so",
+        "libz.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncHumVideoBase.so",
+      "sha256": "b8478bf02158143fce84bb1a48d09c8bd7bf75a939480c0bde6292e896376c82",
+      "size": 67592,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libdl.so",
+        "libz.so",
+        "libnativewindow.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncHumanDoubleExposure.so",
+      "sha256": "27c5fe751c1a9dd0b53db54559bb5233c46e46f0f1aaa0ee18b8d3cafa1b60dd",
+      "size": 5760,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncHumanSegFigureFusion.so",
+      "sha256": "239dd3fc9627dcd37214b4b091d21518e2623ec51e69b588a0d086215ca1fd40",
+      "size": 5952,
+      "kind": "library",
+      "needed": [
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libAncSegBaseSdk.so",
+      "sha256": "79bb398c9fef765a2ae1d9fac732f0cd974bac0fd009f69317ff66e6383a88d5",
+      "size": 4618136,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libz.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libBokehPre.so",
+      "sha256": "d307433f907cb6ac31c38a8b2bbb2cc9a03cc1aa8abb71d90ce297b23b599dc1",
+      "size": 5848,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libCaptureBokeh.so",
+      "sha256": "3f797237672f1933ba22e1860baa970550d7fda5019dd026af05d21a843db291",
+      "size": 1270312,
+      "kind": "library",
+      "needed": [
+        "libc++_shared.so",
+        "liblog.so",
+        "libz.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libEIS.so",
+      "sha256": "db7a86b20b771486d51227f32fd43c183d69ce063f935ebd813d50397118be9a",
+      "size": 337353,
+      "kind": "library",
+      "needed": [
+        "libOGLManager.so",
+        "libDeVIS.so",
+        "liblog.so",
+        "libui-oplus.so",
+        "libutils.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libnativewindow.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "replace",
+      "replace_sha256": [
+        "549644f186da6c5a8c32262543ffdc96a9bb756c73281d9952360e78d6bf182e"
+      ]
+    },
+    {
+      "path": "odm/lib64/libFDClite.so",
+      "sha256": "67d5767c7d47803f0dd54c58fadd0f6b024ecf9f95379f78fe4355e33a4c0be1",
+      "size": 9930672,
+      "kind": "library",
+      "needed": [
+        "libstfd_mobile_api.so",
+        "libAncSegmentSdk.so",
+        "libancbase_segment.so",
+        "libc.so",
+        "libz.so",
+        "libdl.so",
+        "libm.so",
+        "liblog.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libFaceBeautyJni.so",
+      "sha256": "5f3e59dd001bb7971fc916806808dba5f4d26a92873b23743579e55cd25ef8aa",
+      "size": 516168,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libPerfectColor.so",
+      "sha256": "96d849ec7c2689907583f29d6efab2ad186c23f0f8443465e1d5326dd058ced0",
+      "size": 579912,
+      "kind": "library",
+      "needed": [
+        "libOpenCL.so",
+        "liblog.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libRedeyeReduce.so",
+      "sha256": "8b40f06eb11b86917c09243eb687e6ec846c690f526102e75f8fa2b87d865433",
+      "size": 1170776,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libGLESv2.so",
+        "libEGL.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libSuperRaw.so",
+      "sha256": "b06738d763bc5054ce1a6d66bade54802bcc02c9b2f5e4cd5c4ef63fa49dabbb",
+      "size": 417985,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libstdc++_vendor.so",
+        "libc++_shared.so",
+        "libcdsprpc.so",
+        "libm.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libSuperTextWrapper.so",
+      "sha256": "076006bc9deafc3c81f4ce1ed16bd71a11e64c9857d15ba051f88060b22cadf4",
+      "size": 891984,
+      "kind": "library",
+      "needed": [
+        "libXDocProcessSDK.so",
+        "libYTCommon.so",
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libTrafficMode.so",
+      "sha256": "44bd7b13c15d3a00f35a968ee86ee48d54c53fc354697d719d52959cb34d241b",
+      "size": 67584,
+      "kind": "library",
+      "needed": [
+        "libc++_shared.so",
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libXDocProcessSDK.so",
+      "sha256": "7e8bddf7457b7186a86f567822720cafaecdf1812da755001c07123fb825efef",
+      "size": 6966904,
+      "kind": "library",
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libYTCommon.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libz.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libYTCommon.so",
+      "sha256": "70985ff89f801e3c68322be1b376b704b14e1b620882a08e888c5511ebea1d38",
+      "size": 857313,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libz.so",
+        "libm.so",
+        "libstdc++_vendor.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libaisd.so",
+      "sha256": "5869c8360b6e0bbd59dd729100705fddbd96c78dfe4a9cc843a3760ab8efb196",
+      "size": 12068800,
+      "kind": "library",
+      "needed": [
+        "libSNPE.so",
+        "libc++_shared.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libaiseg.so",
+      "sha256": "907d6436fb935430e9f9a1de6583eb970e57c57bdd26f4d5aebf243feabff999",
+      "size": 5848,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libalCFR.so",
+      "sha256": "2bd2f508619a547799b6ade45d1ef4d0d9d518f77b79ad177daadb67df496145",
+      "size": 321744,
+      "kind": "library",
+      "needed": [
+        "libOpenCL.so",
+        "libc++_shared.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libancbase_rt_bokeh.so",
+      "sha256": "4eaaadc54e3d08b9c21b1d0d068de783ebf01dd64accf8a9001e194cb1fd559b",
+      "size": 13495360,
+      "kind": "library",
+      "needed": [
+        "libm.so",
+        "liblog.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libancbase_segbase.so",
+      "sha256": "0904bf939baf5be42f7e0d31ea2e89422202162b5e9cf69afb49c1ec376cabcc",
+      "size": 23396976,
+      "kind": "library",
+      "needed": [
+        "libm.so",
+        "liblog.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libapspng.so",
+      "sha256": "9aae4ed339614f2ea842b7e4e6ff60e2cf2d5675258a52c3671113dc36dfe415",
+      "size": 230688,
+      "kind": "library",
+      "needed": [
+        "libz.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libapsyuv.so",
+      "sha256": "f246517076ff811144e8fa74a892b8be7c6acd1d30cccef272d96144b9365f13",
+      "size": 368984,
+      "kind": "library",
+      "needed": [
+        "libapsjpeg.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libarcsoft_long_exposure_capture.so",
+      "sha256": "1952cca5640f4ad54f575845ccf83cce347cbbdb64e7f80b5ca0339b600e9dff",
+      "size": 10753633,
+      "kind": "library",
+      "needed": [
+        "libcdsprpc.so",
+        "libmpbase.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libarcsoft_long_exposure_preview.so",
+      "sha256": "7f5097987e12cb6a068f4c9148b461ddad737e7734fc2ac409eaa00597f32f7f",
+      "size": 10424145,
+      "kind": "library",
+      "needed": [
+        "libmpbase.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libeffect_custom.so",
+      "sha256": "7896e7ace8735514be0077b62dfd732807097af8a66ac4ff59e685ee8e929c05",
+      "size": 1920608,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libz.so",
+        "libdl.so",
+        "libm.so",
+        "libc++_shared.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libimgClarityEvaluate.so",
+      "sha256": "7839ae9d64fea97c44e2e22b64f5074f27dac4e29a8cb1c95070426c8f9c2990",
+      "size": 12344832,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libm.so",
+        "libc++_shared.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libnightvision.so",
+      "sha256": "190b4ec6df291b09e14b153ba97f1c4ea960de3cefc4e898e3c2585dde95b682",
+      "size": 7413545,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libcdsprpc.so",
+        "libfastov_dsp.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ],
+      "install": "add-or-replace",
+      "replace_sha256": [
+        "880efd3a366c4b81d4e8f0ecc4b711f91feaef8d4a59e98b4affaa05492b6a31"
+      ]
+    },
+    {
+      "path": "odm/lib64/libnpu.so",
+      "sha256": "2dbbb8eda04d3b3d412cf5b0562b2f93d6b94f2cde516630d38f4dd2ec0ace8d",
+      "size": 3612320,
+      "kind": "library",
+      "needed": [
+        "liblog.so",
+        "libcdsprpc.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libpngwrapper.so",
+      "sha256": "fe7758308e53ce7d96ed86df5215b8ce74c94e98fcdde3930b20b167a8a99e48",
+      "size": 11136,
+      "kind": "library",
+      "needed": [
+        "libapspng.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libui-oplus.so",
+      "sha256": "efcf187d59b4d57129a1dd0a3aa34da52ee6912617fc8c29fad4f8364a01a7c9",
+      "size": 532201,
+      "kind": "library",
+      "needed": [
+        "android.hardware.graphics.allocator@2.0.so",
+        "android.hardware.graphics.allocator@3.0.so",
+        "android.hardware.graphics.allocator@4.0.so",
+        "android.hardware.graphics.common-V7-ndk.so",
+        "android.hardware.graphics.common@1.2.so",
+        "android.hardware.graphics.mapper@2.0.so",
+        "android.hardware.graphics.mapper@2.1.so",
+        "android.hardware.graphics.mapper@3.0.so",
+        "android.hardware.graphics.mapper@4.0.so",
+        "libbase.so",
+        "libcutils.so",
+        "libgralloctypes.so",
+        "libhidlbase.so",
+        "libsync.so",
+        "libutils.so",
+        "liblog.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "odm/lib64/libyuvwrapper.so",
+      "sha256": "7d085e2ee3b953b71369fd72a0b2c96b71aa8f8429c77532caede28a5268be90",
+      "size": 11040,
+      "kind": "library",
+      "needed": [
+        "libapsyuv.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    },
+    {
+      "path": "vendor/lib/libcamxexternalformatutils.so",
+      "sha256": "7cbcb37fc09c9a4946f2f3bf585d81033981d6ea7af4a721bd0ebd83825bef71",
+      "size": 14544,
+      "kind": "library",
+      "needed": [
+        "libcutils.so",
+        "liblog.so",
+        "libsync.so",
+        "libz.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "install": "add"
+    }
+  ]
+}

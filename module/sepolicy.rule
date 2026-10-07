@@ -1,0 +1,13 @@
+# aox-cam4 camera policy (varakumar01/android_hardware_oplus aox-cam4).
+# Rules naming a type this ROM lacks are ignored by KernelSU.
+
+# fc0d19d: camera scene hints. liboplus-uah-client in the camera provider
+# calls the power HAL: hal_client_domain(hal_camera_default, hal_power).
+typeattribute hal_camera_default hal_power_client
+allow hal_camera_default hal_power_service service_manager find
+allow hal_camera_default hal_power_server binder { call transfer }
+allow hal_power_server hal_camera_default binder transfer
+allow hal_camera_default hal_power_server fd use
+
+# 96d618c: label /proc/OIS like the other camera procfs nodes.
+genfscon proc /OIS u:object_r:vendor_proc_camera:s0

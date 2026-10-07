@@ -1,0 +1,54 @@
+# Local donor downloads, device captures, tools and generated packages
+/.cache/
+/build/
+/dist/
+/proprietary/
+
+# Proprietary Android binaries and flashable artifacts
+*.apk
+*.aab
+*.idsig
+*.jar
+*.dex
+*.odex
+*.vdex
+*.so
+*.img
+*.bin
+*.zip
+
+# Signing keys and local credentials
+/keys/
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.key
+sensitive-identifiers*.txt
+.env
+.env.*
+!.env.example
+
+# Device diagnostics outside the normal cache directory
+/device/
+/diagnostics/
+/test-media/
+*.log
+
+# Python bytecode, environments and tool caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

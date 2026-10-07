@@ -1,0 +1,117 @@
+name: Build module
+
+# Every push to main (and manual runs) builds a KernelSU Next module ZIP from
+# the pinned public sources, uploads it as a workflow artifact and publishes
+# it as a GitHub prerelease. Pull requests only build and test.
+#
+# This is the generic build: donor APK as published, OnePlus 11 capture-filter
+# wrapper, aox-cam4 camera changes and the uah client. Device-collected
+# libraries (--native-cache), the patched/re-signed APK and the blur engine
+# need a phone and the private signing key, so they are not part of CI builds.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write  # publish releases
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q busybox clang lld llvm libc++-dev libc++abi-dev
+          python3 -m pip install --quiet pytest unicorn
+
+      - name: Cache pinned sources
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/donor
+            .cache/aox-cam4
+          key: sources-${{ hashFiles('aox-cam4/manifest.json', 'scripts/build.py') }}
+
+      - name: Fetch donor (pinned)
+        run: |
+          revision=$(sed -n 's/^DONOR_REVISION = "\(.*\)"/\1/p' scripts/build.py)
+          if [ "$(git -C .cache/donor/op9 rev-parse HEAD 2>/dev/null)" != "$revision" ]; then
+            rm -rf .cache/donor/op9
+            git clone -q --filter=blob:none https://github.com/dev-sm8350/vendor_oplus_camera .cache/donor/op9
+            git -C .cache/donor/op9 checkout -q "$revision"
+          fi
+
+      - name: Fetch aox-cam4 libraries and test fixtures
+        run: python3 -I scripts/prepare_aox_cam4.py --fixtures
+
+      - name: Build liboplus-uah-client
+        run: |
+          export PATH="/usr/lib/llvm-18/bin:$PATH"
+          sh native/uah-client/build.sh .cache/aox-cam4/liboplus-uah-client.so
+
+      - name: Shell checks
+        run: |
+          python3 -m pip install --quiet shellcheck-py
+          for script in module/*.sh native/uah-client/build.sh; do busybox sh -n "$script"; done
+          shellcheck -s sh -x module/aox-cam4.sh module/customize.sh module/post-fs-data.sh \
+            module/mount-camera.sh native/uah-client/build.sh
+
+      - name: Tests
+        run: |
+          export PATH="/usr/lib/llvm-18/bin:$PATH"
+          python3 -m pytest -q tests
+
+      - name: Build module
+        run: |
+          cd scripts
+          python3 build.py --filter-cache ../.cache/donor/filter \
+            --aox-cam4-cache ../.cache/aox-cam4 \
+            --uah-client ../.cache/aox-cam4/liboplus-uah-client.so
+          cd ..
+          version=$(sed -n 's/^version=//p' module/module.prop)
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "ZIP=ooscamera-op9-$version-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          cat build/ooscamera-op9-*.zip.sha256
+
+      - name: Upload module
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ZIP }}
+          path: |
+            build/ooscamera-op9-*.zip
+            build/ooscamera-op9-*.zip.sha256
+            !build/ooscamera-op9.zip
+            !build/ooscamera-op9.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$VERSION-build$GITHUB_RUN_NUMBER"
+          {
+            echo "Automatic build of \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
+            echo
+            echo "Generic build from pinned public sources: no device-collected libraries,"
+            echo "patched APK or blur engine. Install in KernelSU Next, reboot, then set"
+            echo "App Profile → OOS Camera → Umount modules OFF. Check"
+            echo "/data/adb/modules/ooscamera_op9/aox-cam4.log after the first boot."
+            echo
+            echo "SHA-256: \`$(cut -d ' ' -f 1 build/ooscamera-op9-$VERSION.zip.sha256)\`"
+          } > release-notes.md
+          gh release create "$tag" \
+            "build/ooscamera-op9-$VERSION.zip" "build/ooscamera-op9-$VERSION.zip.sha256" \
+            --target "$GITHUB_SHA" --title "OOS Camera $VERSION (build $GITHUB_RUN_NUMBER)" \
+            --notes-file release-notes.md --prerelease

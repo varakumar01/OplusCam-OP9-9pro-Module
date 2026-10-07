@@ -1,0 +1,32 @@
+# aox-cam4 camera configuration edits, applied at install time.
+# Source: varakumar01/proprietary_vendor_oneplus_lemonade aox-cam4,
+# f7ae875..909a41d (2026-09-30..2026-10-06). See aox-cam4/README.md.
+#
+# tag|file|VendorTag|Type|Count|from|to        from '*': any value, append if missing
+# ini|file|Section|Key|from|to                 from '-': also add when missing
+# zoommin|file|Section|Key|ReferenceKey|from   Key's minimum zoom := ReferenceKey's
+# modekey|file|mode|key|from|to                first key after "mode" : "<mode>"
+# block|file|id[,id...]                        exact blocks in blocks/, all or none
+# audiocap|-|encoder|maxBitRate                media profiles AudioEncoderCap
+
+# 1acc28e re-enable 4K 60fps video capability advertisement
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.4k.60fps.support|Byte|1|*|1
+# 74562fa allow focus tracking in 4K video
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.video.4k.track.focus.support|Byte|1|*|1
+# 86876a2 show the Text Scanner mode
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.export.super.text.support|Byte|1|*|1
+# 719c4b4 recreate the recorder surface for every video session
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.surface.release.support|Byte|1|*|1
+# dcc919d turn on the hardware JPEG encoder for OplusCamera captures
+tag|odm/etc/camera/config/oplus_camera_aps_config|com.oplus.aps.support.hw_jpeg|Int32|1|*|1
+# 66d4b9a keep the main sensor streaming while the zoom moves below 1x
+ini|odm/etc/camera/CameraHWConfiguration.config|SatSmoothZoom|closeSlaveThresholdTime|-|1
+ini|odm/etc/camera/CameraHWConfiguration.config|UltraWideStrategy|fixActiveMapList|0x1|0x3
+zoommin|odm/etc/camera/CameraHWConfiguration.config|ZoomRange|custom.video.60fps.zoom.range|custom.video.zoom.range|1.0
+# 22923cd keep aps_algo_supernight for night mode's rear entity (stock value)
+modekey|odm/etc/camera/config/oplus_camera_algo_switch_config|night|aps_algo_supernight|*|1
+# 5b514cd + d954b5c video_120fps in rear_main's video feature table, mapped
+# to the constrained high-speed operation mode
+block|odm/etc/camera/config/camera_unit_config|video-120fps-fps-map,video-120fps-rear-main
+# 7c8d1f0 (device tree) raise the AAC encoder cap to 288 kbps for video audio
+audiocap|-|aac|288000

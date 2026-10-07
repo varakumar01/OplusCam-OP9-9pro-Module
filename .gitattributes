@@ -1,0 +1,5 @@
+# Preserve upstream whitespace in patch context and removed lines.
+*.patch -whitespace
+
+# Exact OEM configuration blocks (CRLF preserved).
+module/aox-cam4/blocks/* -text
