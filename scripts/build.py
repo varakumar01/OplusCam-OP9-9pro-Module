@@ -22,6 +22,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 AOX_MANIFEST = ROOT / "aox/manifest.json"
 CAMERA_APK = "system_ext/priv-app/OplusCamera/OplusCamera.apk"
 FWK_JAR = "system/framework/oplus-fwk.jar"
+FWK_EXTRA = [b"Lcom/oplus/os/WaveformEffect$Builder;", b"Lcom/oplus/os/LinearmotorVibrator;",
+             b"Lcom/oplus/util/OplusTypeCastingHelper;"]
 UAH_CLIENT_PATH = "odm/lib64/liboplus-uah-client.so"
 UAH_CLIENT_MARKER = b"ooscamera-aox-uah-client"
 UAH_CLIENT_SYMBOLS = [
@@ -191,6 +193,9 @@ def stage_aox(stage, cache, uah_client, apksigner="apksigner"):
                            if re.fullmatch(r"classes\d*\.dex", name))
         if any(marker.encode() not in dex for marker in manifest["fwk_markers"]):
             raise SystemExit("oplus-fwk.jar input lacks the classes the camera needs")
+        # AxionOS has these in frameworks/base; other ROMs get them from fwk/.
+        if any(name not in dex for name in FWK_EXTRA):
+            raise SystemExit("oplus-fwk.jar input lacks the fwk/ classes")
         (stage / FWK_JAR).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(framework, stage / FWK_JAR)
         staged[FWK_JAR] = hashlib.sha256(framework.read_bytes()).hexdigest()

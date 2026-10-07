@@ -67,9 +67,9 @@
     },
     {
       "name": "oplus-fwk.jar",
-      "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19.jar",
-      "sha256": "2deb110b903f8f6ec740cd67168de1ccc45448e77d224538f4c6698c25424112",
-      "note": "oplus-fwk built from the hardware source revision with javac and D8"
+      "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19-r2.jar",
+      "sha256": "c1339fd1d0ffdfed2fb9766747dc677a141b5c0af8386d38f49402baffd59a0b",
+      "note": "oplus-fwk built from the hardware source revision plus fwk/ with javac and D8"
     }
   ],
   "files": [

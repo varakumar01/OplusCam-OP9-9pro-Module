@@ -41,7 +41,8 @@ stops rather than leaving an app that cannot start.
 5.x needs classes that older `oplus-fwk.jar` builds lack. The installer looks
 for three of them in the ROM's `/system/framework/oplus-fwk.jar`. If any is
 missing, the module overlays its own jar, built from
-`android_hardware_oplus` at the pinned revision. This replaces a boot jar:
+`android_hardware_oplus` at the pinned revision plus the three classes in
+`fwk/`, which AxionOS keeps in `frameworks/base` and other ROMs lack. This replaces a boot jar:
 the first boot is slower, and another app on that ROM that relies on a class
 only its own `oplus-fwk` had would break. If that boot does not complete,
 the module disables itself on the next one.
