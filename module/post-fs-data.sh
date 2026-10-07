@@ -3,10 +3,10 @@ MODDIR=${0%/*}
 # shellcheck source=module/mount-camera.sh
 . "$MODDIR/mount-camera.sh"
 camera_mount || exit 1
-if [ -f "$MODDIR/aox-cam4.sh" ]; then
-    # shellcheck source=module/aox-cam4.sh
-    . "$MODDIR/aox-cam4.sh"
-    aox_cam4_mount_media
+if [ -f "$MODDIR/aox.sh" ]; then
+    # shellcheck source=module/aox.sh
+    . "$MODDIR/aox.sh"
+    aox_mount_media
 fi
 RESETPROP=/data/adb/ksu/bin/resetprop
 [ -x "$RESETPROP" ] || RESETPROP=/data/adb/ksud

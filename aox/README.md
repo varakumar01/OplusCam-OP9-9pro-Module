@@ -1,9 +1,9 @@
-# aox-cam4 camera changes
+# aox camera changes
 
-This module carries the camera work from the `aox-cam4` branches, 2026-09-30 to 2026-10-06. It is meant for OnePlus 9 / 9 Pro ROMs that were not built from those branches. Only camera changes are included. The aox-cam4 camera work is by
+This module carries the camera work from the `aox` branches, 2026-09-30 to 2026-10-06. It is meant for OnePlus 9 / 9 Pro ROMs that were not built from those branches. Only camera changes are included. The aox camera work is by
 [varakumar01](https://github.com/varakumar01).
 
-| Repository (aox-cam4) | Pinned revision |
+| Repository (aox) | Pinned revision |
 |---|---|
 | varakumar01/proprietary_vendor_oneplus_lemonade | `909a41d` (base `f7ae875`) |
 | varakumar01/android_device_oneplus_lemonade | `09a7223` |
@@ -14,7 +14,7 @@ Pairs of commits that were later reverted cancel out and are left out: the urcc 
 
 ## What the module applies
 
-Every change is conditional, and the installer logs each decision to `/data/adb/modules/ooscamera_op9/aox-cam4.log`. If the module already ships a file or sets a value, the module's version wins. If the device already has a file, the device copy stays unless the change was made against that exact file.
+Every change is conditional, and the installer logs each decision to `/data/adb/modules/ooscamera_op9/aox.log`. If the module already ships a file or sets a value, the module's version wins. If the device already has a file, the device copy stays unless the change was made against that exact file.
 
 | Change | Commits | How it is applied |
 |---|---|---|
@@ -32,7 +32,7 @@ Every change is conditional, and the installer logs each decision to `/data/adb/
 | `liboplus-uah-client.so`: camera scene hints sent to the power HAL | hardware 238ddc9, common 2277dd9 | Built from `native/uah-client`. Used when the device has no client or has the LineageOS no-op stub. A stock OEM client, which links libuahcore/liburcccore, is never replaced. |
 | sepolicy: `hal_camera_default` as a power HAL client; `/proc/OIS` labelled `vendor_proc_camera` | hardware fc0d19d, 96d618c | `sepolicy.rule` |
 
-The edit definitions live in `module/aox-cam4/edits.txt` and `module/aox-cam4/blocks/`. The pinned library list is `aox-cam4/manifest.json`.
+The edit definitions live in `module/aox/edits.txt` and `module/aox/blocks/`. The pinned library list is `aox/manifest.json`.
 
 ## Camera changes a module cannot carry
 
@@ -46,10 +46,10 @@ The branches' non-camera work (display, audio HAL, settings, diagnostics, apps) 
 ## Build
 
 ```sh
-python scripts/prepare_aox_cam4.py            # fetch + verify the pinned libraries
-sh native/uah-client/build.sh .cache/aox-cam4/liboplus-uah-client.so   # clang + ld.lld
-python scripts/build.py ... --aox-cam4-cache .cache/aox-cam4 \
-  --uah-client .cache/aox-cam4/liboplus-uah-client.so
+python scripts/prepare_aox.py            # fetch + verify the pinned libraries
+sh native/uah-client/build.sh .cache/aox/liboplus-uah-client.so   # clang + ld.lld
+python scripts/build.py ... --aox-cache .cache/aox \
+  --uah-client .cache/aox/liboplus-uah-client.so
 ```
 
-Host tests: `python scripts/prepare_aox_cam4.py --fixtures`, then `python -m pytest tests/test_aox_cam4.py`. The tests need BusyBox, plus clang/lld and host libc++ for the uah client checks.
+Host tests: `python scripts/prepare_aox.py --fixtures`, then `python -m pytest tests/test_aox.py`. The tests need BusyBox, plus clang/lld and host libc++ for the uah client checks.

@@ -55,10 +55,10 @@ if [ -f "$MODPATH/ksu-visibility" ]; then
     set_perm "$MODPATH/ksu-visibility" 0 0 0700
     "$MODPATH/ksu-visibility" check || abort "KernelSU profile interface unavailable; automatic camera setup cannot run."
 fi
-if [ -f "$MODPATH/aox-cam4.sh" ]; then
-    # shellcheck source=module/aox-cam4.sh
-    . "$MODPATH/aox-cam4.sh"
-    aox_cam4_install
+if [ -f "$MODPATH/aox.sh" ]; then
+    # shellcheck source=module/aox.sh
+    . "$MODPATH/aox.sh"
+    aox_install
 fi
 set_perm_recursive "$MODPATH" 0 0 0755 0644
 set_perm "$MODPATH/post-fs-data.sh" 0 0 0755
@@ -73,7 +73,7 @@ fi
 set_perm_recursive "$MODPATH/system" 0 0 0755 0644 u:object_r:system_file:s0
 if [ -f "$MODPATH/native-labels.txt" ]; then
     while IFS= read -r path; do
-        # aox-cam4 libraries this device does not need were removed above.
+        # aox libraries this device does not need were removed above.
         [ -f "$MODPATH/$path" ] || continue
         case "$path" in
             system/vendor/odm/lib64/*.so|system/vendor/lib64/*.so|system/vendor/lib/*.so)
@@ -81,7 +81,7 @@ if [ -f "$MODPATH/native-labels.txt" ]; then
         esac
     done < "$MODPATH/native-labels.txt"
 fi
-[ -f "$MODPATH/aox-cam4.sh" ] && aox_cam4_label
+[ -f "$MODPATH/aox.sh" ] && aox_label
 ui_print "Preparing camera filesystem (one-time installation step)."
 # shellcheck source=module/mount-camera.sh
 . "$MODPATH/mount-camera.sh"

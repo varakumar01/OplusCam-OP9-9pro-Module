@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2025 The LineageOS Project
  * SPDX-License-Identifier: Apache-2.0
  *
- * liboplus-uah-client for ROMs without the aox-cam4 hardware/oplus change
+ * liboplus-uah-client for ROMs without the aox hardware/oplus change
  * 238ddc9 ("[uah-client] send the camera HAL's scene requests to the power
  * HAL"). Same behaviour as that uah-client.cpp, rebuilt so it can be shipped
  * in a module without the platform build:
@@ -287,10 +287,10 @@ EXPORT int uahRuleCtl(void) { return 0; }
 EXPORT int UahResourceInfo(void) { return 0; }
 
 /* Marker for the installer: this copy may be replaced by later module builds. */
-EXPORT const char ooscamera_uah_client_marker[] = "ooscamera-aox-cam4-uah-client";
+EXPORT const char ooscamera_uah_client_marker[] = "ooscamera-aox-uah-client";
 
 #ifdef UAH_HOST_TEST
-/* Host-test hooks (tests/test_aox_cam4.py); not built for the device. */
+/* Host-test hooks (tests/test_aox.py); not built for the device. */
 EXPORT char* uah_test_join(const void* scene, const void* action) { return joinScene(scene, action); }
 EXPORT int uah_test_mode(const char* name) { return modeFor(name); }
 #endif

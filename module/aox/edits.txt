@@ -1,6 +1,6 @@
-# aox-cam4 camera configuration edits, applied at install time.
-# Source: varakumar01/proprietary_vendor_oneplus_lemonade aox-cam4,
-# f7ae875..909a41d (2026-09-30..2026-10-06). See aox-cam4/README.md.
+# aox camera configuration edits, applied at install time.
+# Source: varakumar01/proprietary_vendor_oneplus_lemonade aox,
+# f7ae875..909a41d (2026-09-30..2026-10-06). See aox/README.md.
 #
 # tag|file|VendorTag|Type|Count|from|to        from '*': any value, append if missing
 # ini|file|Section|Key|from|to                 from '-': also add when missing

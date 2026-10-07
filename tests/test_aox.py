@@ -1,7 +1,7 @@
-"""Host checks for the aox-cam4 installer logic, build staging and uah client.
+"""Host checks for the aox installer logic, build staging and uah client.
 
 Configuration tests need the pinned fixtures:
-    python scripts/prepare_aox_cam4.py --fixtures
+    python scripts/prepare_aox.py --fixtures
 Shell tests run under BusyBox ash (as KernelSU does) when it is installed.
 """
 import hashlib
@@ -15,9 +15,9 @@ import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-CACHE = ROOT / ".cache/aox-cam4"
+CACHE = ROOT / ".cache/aox"
 FIXTURES = CACHE / "fixtures"
-SCRIPT = ROOT / "module/aox-cam4.sh"
+SCRIPT = ROOT / "module/aox.sh"
 CONFIGS = [
     "odm/etc/camera/CameraHWConfiguration.config",
     "odm/etc/camera/config/camera_unit_config",
@@ -44,16 +44,16 @@ class Installer(unittest.TestCase):
         self.root = self.tmp / "root"
         self.modpath = self.tmp / "module"
         self.root.mkdir()
-        shutil.copytree(ROOT / "module/aox-cam4", self.modpath / "aox-cam4")
+        shutil.copytree(ROOT / "module/aox", self.modpath / "aox")
 
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
     def install(self):
-        script = ("ui_print() { :; }; . \"$1\"; aox_cam4_install")
+        script = ("ui_print() { :; }; . \"$1\"; aox_install")
         env = dict(os.environ, MODPATH=str(self.modpath), AOX_ROOT=str(self.root))
         subprocess.run([SHELL, "sh", "-c", script, "test", str(SCRIPT)], env=env, check=True)
-        return (self.modpath / "aox-cam4.log").read_text()
+        return (self.modpath / "aox.log").read_text()
 
     def device_file(self, path, data):
         target = self.root / path
@@ -63,7 +63,7 @@ class Installer(unittest.TestCase):
     # ----------------------------------------------------------- configs
     def fixtures(self):
         if not (FIXTURES / "base" / CONFIGS[0]).exists():
-            self.skipTest("run scripts/prepare_aox_cam4.py --fixtures")
+            self.skipTest("run scripts/prepare_aox.py --fixtures")
         for path in CONFIGS + [MEDIA]:
             self.device_file(path, (FIXTURES / "base" / path).read_bytes())
 
@@ -80,7 +80,7 @@ class Installer(unittest.TestCase):
                 self.assertEqual(tags(result), tags(head), path)
             else:
                 self.assertEqual(result, head, path)
-        media = self.modpath / "aox-cam4/media" / MEDIA
+        media = self.modpath / "aox/media" / MEDIA
         self.assertEqual(media.read_bytes(), (FIXTURES / "head" / MEDIA).read_bytes())
 
     def test_second_install_is_a_no_op(self):
@@ -93,13 +93,13 @@ class Installer(unittest.TestCase):
 
     def test_head_device_needs_no_config_copy(self):
         if not (FIXTURES / "head" / CONFIGS[0]).exists():
-            self.skipTest("run scripts/prepare_aox_cam4.py --fixtures")
+            self.skipTest("run scripts/prepare_aox.py --fixtures")
         for path in CONFIGS + [MEDIA]:
             self.device_file(path, (FIXTURES / "head" / path).read_bytes())
         log = self.install()
         self.assertNotIn("apply", log)
         self.assertFalse(any(staged(self.modpath, p).exists() for p in CONFIGS))
-        self.assertFalse((self.modpath / "aox-cam4/media").exists())
+        self.assertFalse((self.modpath / "aox/media").exists())
 
     def test_unmatched_edits_are_skipped_not_forced(self):
         self.fixtures()
@@ -112,7 +112,7 @@ class Installer(unittest.TestCase):
         self.device_file(path, text.encode())
         unit = "odm/etc/camera/config/camera_unit_config"
         # A different rear_main video table; the fps map alone still matches.
-        old = (ROOT / "module/aox-cam4/blocks/video-120fps-rear-main.old").read_bytes()
+        old = (ROOT / "module/aox/blocks/video-120fps-rear-main.old").read_bytes()
         data = (FIXTURES / "base" / unit).read_bytes().replace(old, old.replace(b'"fovc/', b'"fovc2/'))
         self.device_file(unit, data)
         log = self.install()
@@ -149,8 +149,8 @@ class Installer(unittest.TestCase):
             target.write_bytes(data)
             lines.append("|".join([path, rule, hashlib.sha256(data).hexdigest(),
                                    ",".join(replace), ",".join(needed)]))
-        (self.modpath / "aox-cam4/files.txt").write_text("\n".join(lines) + "\n")
-        (self.modpath / "aox-cam4/edits.txt").write_text("")
+        (self.modpath / "aox/files.txt").write_text("\n".join(lines) + "\n")
+        (self.modpath / "aox/edits.txt").write_text("")
 
     def test_library_rules_and_dependencies(self):
         sha = lambda data: hashlib.sha256(data).hexdigest()
@@ -213,30 +213,30 @@ class Installer(unittest.TestCase):
 class BuildStaging(unittest.TestCase):
     def test_module_payload_wins_and_files_list(self):
         if not (CACHE / "source.json").exists():
-            self.skipTest("run scripts/prepare_aox_cam4.py")
+            self.skipTest("run scripts/prepare_aox.py")
         import build
-        manifest = json.loads(build.AOX_CAM4_MANIFEST.read_text())
+        manifest = json.loads(build.AOX_MANIFEST.read_text())
         with tempfile.TemporaryDirectory() as tmp:
             stage = pathlib.Path(tmp)
             owned = stage / "system/vendor/odm/lib64/libAncHumBokeh.so"
             owned.parent.mkdir(parents=True)
             owned.write_bytes(b"module blur engine")
-            build.stage_aox_cam4(stage, CACHE, None)
+            build.stage_aox(stage, CACHE, None)
             self.assertEqual(owned.read_bytes(), b"module blur engine")
-            source = json.loads((stage / "aox-cam4-source.json").read_text())
+            source = json.loads((stage / "aox-source.json").read_text())
             self.assertIn("odm/lib64/libAncHumBokeh.so", source["module_provided"])
             for path in manifest["module_owned"]:
-                self.assertFalse(build.aox_cam4_target(stage, path).exists(), path)
-            rows = [line.split("|") for line in (stage / "aox-cam4/files.txt").read_text().splitlines()
+                self.assertFalse(build.aox_target(stage, path).exists(), path)
+            rows = [line.split("|") for line in (stage / "aox/files.txt").read_text().splitlines()
                     if not line.startswith("#")]
             self.assertEqual({row[0] for row in rows}, set(source["files"]))
             for row in rows:
-                data = build.aox_cam4_target(stage, row[0]).read_bytes()
+                data = build.aox_target(stage, row[0]).read_bytes()
                 self.assertEqual(hashlib.sha256(data).hexdigest(), row[2])
                 if "/lib64/" in row[0]:  # elf_needed reads AArch64 libraries
                     self.assertEqual(row[4].split(","), build.elf_needed(data), row[0])
             self.assertTrue((stage / "sepolicy.rule").exists())
-            self.assertTrue((stage / "aox-cam4/blocks/video-120fps-rear-main.old").exists())
+            self.assertTrue((stage / "aox/blocks/video-120fps-rear-main.old").exists())
 
 
 @unittest.skipUnless(shutil.which("clang") and shutil.which("ld.lld"), "clang and lld required")

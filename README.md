@@ -2,10 +2,10 @@
 
 **v1.0.0:** the installer now accepts OnePlus 9 (`lemonade`) and
 9 Pro (`lemonadep`) on any ROM that ships `oplus-fwk.jar`, not only crDroid.
-It also carries the `aox-cam4` camera work (2026-09-30 to 2026-10-06) for
+It also carries the `aox` camera work (2026-09-30 to 2026-10-06) for
 ROMs that lack it: camera libraries, config edits applied at install time,
 power-HAL scene hints and camera sepolicy. Each change applies only where it
-matches the device. See [aox-cam4/README.md](aox-cam4/README.md) for what is
+matches the device. See [aox/README.md](aox/README.md) for what is
 included, how each piece is applied, and which changes still need a ROM
 rebuild.
 

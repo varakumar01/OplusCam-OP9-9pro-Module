@@ -1,4 +1,4 @@
-# aox-cam4 camera policy (varakumar01/android_hardware_oplus aox-cam4).
+# aox camera policy (varakumar01/android_hardware_oplus aox).
 # Rules naming a type this ROM lacks are ignored by KernelSU.
 
 # fc0d19d: camera scene hints. liboplus-uah-client in the camera provider

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Fetch the pinned aox-cam4 camera libraries for build.py --aox-cam4-cache.
+"""Fetch the pinned aox camera libraries for build.py --aox-cache.
 
-Downloads every file listed in aox-cam4/manifest.json from the pinned
+Downloads every file listed in aox/manifest.json from the pinned
 proprietary_vendor_oneplus_lemonade revision and verifies its SHA-256.
 Configuration changes are not downloaded: they are applied on the device as
-edits (module/aox-cam4/edits.txt). With --fixtures, also fetch the base and
-head configuration files used by tests/test_aox_cam4.py.
+edits (module/aox/edits.txt). With --fixtures, also fetch the base and
+head configuration files used by tests/test_aox.py.
 """
 import argparse
 import hashlib
@@ -16,7 +16,7 @@ import time
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "aox-cam4/manifest.json"
+MANIFEST = ROOT / "aox/manifest.json"
 CONFIGS = [
     "odm/etc/camera/CameraHWConfiguration.config",
     "odm/etc/camera/config/camera_unit_config",
@@ -44,7 +44,7 @@ def fetch(url, attempts=5):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--cache", type=pathlib.Path, default=ROOT / ".cache/aox-cam4")
+    parser.add_argument("--cache", type=pathlib.Path, default=ROOT / ".cache/aox")
     parser.add_argument("--fixtures", action="store_true",
                         help="Also fetch base/head configuration fixtures for host tests")
     args = parser.parse_args()
@@ -58,7 +58,7 @@ def main():
         if data.startswith(b"version https://git-lfs.github.com/spec/v1"):
             raise SystemExit(f"Unresolved LFS pointer: {entry['path']}")
         if hashlib.sha256(data).hexdigest() != entry["sha256"]:
-            raise SystemExit(f"aox-cam4 checksum mismatch: {entry['path']}")
+            raise SystemExit(f"aox checksum mismatch: {entry['path']}")
         local.parent.mkdir(parents=True, exist_ok=True)
         local.write_bytes(data)
         print(f"fetched {entry['path']}")
@@ -80,7 +80,7 @@ def main():
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(fetch(raw_url(manifest["device_repository"], revision, MEDIA)))
         print(f"fixtures in {fixtures}")
-    print(f"{len(manifest['files'])} aox-cam4 files verified in {args.cache}")
+    print(f"{len(manifest['files'])} aox files verified in {args.cache}")
 
 
 if __name__ == "__main__":

@@ -1,15 +1,15 @@
 #!/system/bin/sh
-# aox-cam4 camera changes for ROMs that do not include them.
+# aox camera changes for ROMs that do not include them.
 # Sourced by customize.sh (install) and post-fs-data.sh (media mount).
 #
-# Libraries listed in aox-cam4/files.txt were staged by build.py. Each one is
+# Libraries listed in aox/files.txt were staged by build.py. Each one is
 # kept only if its install rule matches this device and every DT_NEEDED
 # library it lists can be found; otherwise the device copy stays.
-# Text configuration edits (aox-cam4/edits.txt) are applied to the copy the
+# Text configuration edits (aox/edits.txt) are applied to the copy the
 # module already ships, else to this device's own file. Edits that do not
 # match are skipped and logged, never forced.
 
-AOX_DIR=aox-cam4
+AOX_DIR=aox
 # Device root; host tests point this at a fixture tree.
 AOX_ROOT=${AOX_ROOT:-}
 
@@ -468,23 +468,23 @@ aox_select_libraries() {
 # ---------------------------------------------------------------------------
 # Entry points.
 
-aox_cam4_install() {
+aox_install() {
     [ -d "$MODPATH/$AOX_DIR" ] || return 0
-    AOX_LOG="$MODPATH/aox-cam4.log"
+    AOX_LOG="$MODPATH/aox.log"
     : > "$AOX_LOG"
-    ui_print "Applying aox-cam4 camera changes where this ROM lacks them."
+    ui_print "Applying aox camera changes where this ROM lacks them."
     aox_select_libraries
     aox_apply_edits
     aox_commit_configs
     # The adsp overlay is mounted only when it carries a file.
     rmdir -p "$MODPATH/system/vendor/odm/lib/rfsa/adsp" 2>/dev/null
     applied=$(grep -c '^apply\|^add' "$AOX_LOG")
-    ui_print "aox-cam4: $applied change(s) applied; details in aox-cam4.log."
+    ui_print "aox: $applied change(s) applied; details in aox.log."
 }
 
 # Give staged replacements the device file's SELinux label (after the
 # installer's blanket system_file labelling).
-aox_cam4_label() {
+aox_label() {
     [ -d "$MODPATH/$AOX_DIR" ] || return 0
     for list in configs.txt installed.txt; do
         [ -f "$MODPATH/$AOX_DIR/$list" ] || continue
@@ -508,7 +508,7 @@ aox_cam4_label() {
 }
 
 # post-fs-data: bind the patched media profiles over the device files.
-aox_cam4_mount_media() {
+aox_mount_media() {
     media="$MODDIR/$AOX_DIR/media"
     [ -d "$media" ] || return 0
     find "$media" -type f | while IFS= read -r source; do

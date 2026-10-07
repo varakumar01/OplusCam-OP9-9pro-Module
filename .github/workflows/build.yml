@@ -5,7 +5,7 @@ name: Build module
 # it as a GitHub prerelease. Pull requests only build and test.
 #
 # This is the generic build: donor APK as published, OnePlus 11 capture-filter
-# wrapper, aox-cam4 camera changes and the uah client. Device-collected
+# wrapper, aox camera changes and the uah client. Device-collected
 # libraries (--native-cache), the patched/re-signed APK and the blur engine
 # need a phone and the private signing key, so they are not part of CI builds.
 
@@ -39,8 +39,8 @@ jobs:
         with:
           path: |
             .cache/donor
-            .cache/aox-cam4
-          key: sources-${{ hashFiles('aox-cam4/manifest.json', 'scripts/build.py') }}
+            .cache/aox
+          key: sources-${{ hashFiles('aox/manifest.json', 'scripts/build.py') }}
 
       - name: Fetch donor (pinned)
         run: |
@@ -51,19 +51,19 @@ jobs:
             git -C .cache/donor/op9 checkout -q "$revision"
           fi
 
-      - name: Fetch aox-cam4 libraries and test fixtures
-        run: python3 -I scripts/prepare_aox_cam4.py --fixtures
+      - name: Fetch aox libraries and test fixtures
+        run: python3 -I scripts/prepare_aox.py --fixtures
 
       - name: Build liboplus-uah-client
         run: |
           export PATH="/usr/lib/llvm-18/bin:$PATH"
-          sh native/uah-client/build.sh .cache/aox-cam4/liboplus-uah-client.so
+          sh native/uah-client/build.sh .cache/aox/liboplus-uah-client.so
 
       - name: Shell checks
         run: |
           python3 -m pip install --quiet shellcheck-py
           for script in module/*.sh native/uah-client/build.sh; do busybox sh -n "$script"; done
-          shellcheck -s sh -x module/aox-cam4.sh module/customize.sh module/post-fs-data.sh \
+          shellcheck -s sh -x module/aox.sh module/customize.sh module/post-fs-data.sh \
             module/mount-camera.sh native/uah-client/build.sh
 
       - name: Tests
@@ -75,8 +75,8 @@ jobs:
         run: |
           cd scripts
           python3 build.py --filter-cache ../.cache/donor/filter \
-            --aox-cam4-cache ../.cache/aox-cam4 \
-            --uah-client ../.cache/aox-cam4/liboplus-uah-client.so
+            --aox-cache ../.cache/aox \
+            --uah-client ../.cache/aox/liboplus-uah-client.so
           cd ..
           version=$(sed -n 's/^version=//p' module/module.prop)
           echo "VERSION=$version" >> "$GITHUB_ENV"
@@ -107,7 +107,7 @@ jobs:
             echo "Generic build from pinned public sources: no device-collected libraries,"
             echo "patched APK or blur engine. Install in KernelSU Next, reboot, then set"
             echo "App Profile → OOS Camera → Umount modules OFF. Check"
-            echo "/data/adb/modules/ooscamera_op9/aox-cam4.log after the first boot."
+            echo "/data/adb/modules/ooscamera_op9/aox.log after the first boot."
             echo
             echo "SHA-256: \`$(cut -d ' ' -f 1 build/ooscamera-op9-$VERSION.zip.sha256)\`"
           } > release-notes.md

@@ -17,8 +17,8 @@ CONTROL_FILES = {
     "service.sh", "uninstall.sh", "visibility.sh", "ksu-visibility", "visibility-source.json",
     "native-labels.txt", "native-source.json", "provenance.json", "filter-source.json",
     "blur-source.json", "retouch-source.json", "gralloc-source.json", "gralloc32-source.json", "camera-patches.json",
-    "aox-cam4.sh", "sepolicy.rule", "aox-cam4-source.json",
-    "aox-cam4/edits.txt", "aox-cam4/files.txt",
+    "aox.sh", "sepolicy.rule", "aox-source.json",
+    "aox/edits.txt", "aox/files.txt",
 }
 PRIVATE_KEY = re.compile(
     rb"-----BEGIN (?:RSA |EC |ENCRYPTED )?PRIVATE KEY-----\s+"
@@ -34,7 +34,7 @@ def allowed_payload(name):
     if name.startswith(("system/system_ext/lib64/", "system/vendor/lib64/", "system/vendor/lib/",
                         "system/vendor/odm/lib64/")) and name.endswith(".so"):
         return True
-    if name.startswith("aox-cam4/blocks/") and name.endswith((".old", ".new")):
+    if name.startswith("aox/blocks/") and name.endswith((".old", ".new")):
         return True
     if name.startswith("system/vendor/odm/lib/rfsa/adsp/") and name.endswith(".so"):
         return True
@@ -163,13 +163,13 @@ def audit(archive_path, identifiers):
                 path = "system/vendor/odm/lib64/" + name
                 if hashlib.sha256(archive.read(path)).hexdigest() != digest:
                     errors.append(f"OEM source checksum mismatch: {name}")
-        if "aox-cam4-source.json" in names:
-            source = json.loads(archive.read("aox-cam4-source.json"))
+        if "aox-source.json" in names:
+            source = json.loads(archive.read("aox-source.json"))
             for path, digest in source.get("files", {}).items():
                 parts = pathlib.PurePosixPath(path).parts
                 payload = ("system/vendor/" if parts[0] == "odm" else "system/") + path
                 if payload not in names or hashlib.sha256(archive.read(payload)).hexdigest() != digest:
-                    errors.append(f"aox-cam4 checksum mismatch: {path}")
+                    errors.append(f"aox checksum mismatch: {path}")
 
     return {"passed": not errors, "module_entries": len(names),
             "files_and_metadata_scanned": files_scanned,
