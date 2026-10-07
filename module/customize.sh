@@ -10,6 +10,10 @@ for prop in ro.product.vendor.device ro.product.device ro.build.product ro.crdro
 done
 [ -n "$camera_device" ] || abort "Expected a OnePlus 9 or OnePlus 9 Pro."
 ui_print "Device: $camera_device"
+case "$camera_device" in
+    lemonadep|OnePlus9Pro) AOX_DEVICE=lemonadep ;;
+    *) AOX_DEVICE=lemonade ;;
+esac
 CAMERA_SDK=$(getprop ro.build.version.sdk)
 case "$CAMERA_SDK" in
     ''|*[!0-9]*) abort "Cannot determine Android SDK version." ;;
@@ -48,7 +52,7 @@ if [ -f "$MODPATH/gralloc32-source.json" ]; then
     esac
     ui_print "Matching ARMv7 graphics trial for media services."
 fi
-ui_print "Installing experimental OP9 camera dependencies."
+ui_print "Installing OOS Camera for the OnePlus 9 / 9 Pro."
 ui_print "Standalone mounting: Mountify is not required."
 ui_print "A reboot is required for system permissions and library discovery."
 if [ -f "$MODPATH/ksu-visibility" ]; then
@@ -58,7 +62,11 @@ fi
 if [ -f "$MODPATH/aox.sh" ]; then
     # shellcheck source=module/aox.sh
     . "$MODPATH/aox.sh"
-    aox_install
+    if ! aox_install; then
+        # The module directory is discarded on failure; keep the reasons.
+        cp "$MODPATH/aox.log" /data/local/tmp/ooscamera-install.log 2>/dev/null
+        abort "$(grep -E '^(fail|app) ' "$MODPATH/aox.log" | tail -n 1 | cut -c 7-) (log: /data/local/tmp/ooscamera-install.log)"
+    fi
 fi
 set_perm_recursive "$MODPATH" 0 0 0755 0644
 set_perm "$MODPATH/post-fs-data.sh" 0 0 0755
@@ -89,6 +97,7 @@ if ! camera_prepare_image; then
     # Never leave installer mounts behind on failure.
     umount "$MODPATH/.camera-probe" 2>/dev/null
     umount "$MODPATH/.camera-image" 2>/dev/null
+    cp "$MODPATH/aox.log" /data/local/tmp/ooscamera-install.log 2>/dev/null
     abort "Camera filesystem preparation failed; installation cancelled."
 fi
 ui_print "Ready. Reboot, open OOS Camera and grant its permissions."

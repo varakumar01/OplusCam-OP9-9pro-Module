@@ -1,4 +1,4 @@
-# aox camera policy (varakumar01/android_hardware_oplus aox).
+# aox camera policy (varakumar01/android_hardware_oplus and vendor_oplus_camera, aox).
 # Rules naming a type this ROM lacks are ignored by KernelSU.
 
 # fc0d19d: camera scene hints. liboplus-uah-client in the camera provider
@@ -11,3 +11,13 @@ allow hal_camera_default hal_power_server fd use
 
 # 96d618c: label /proc/OIS like the other camera procfs nodes.
 genfscon proc /OIS u:object_r:vendor_proc_camera:s0
+
+# Wakelock held by the camera provider's postproc (YUV to JPEG) loop:
+# wakelock_use(hal_camera_default).
+allow hal_camera_default sysfs_wake_lock file { open read write append getattr }
+allow hal_camera_default hal_camera_default capability2 block_suspend
+allow hal_camera_default system_suspend_hwservice hwservice_manager find
+allow hal_camera_default hal_system_suspend_service service_manager find
+allow hal_camera_default system_suspend_server binder { call transfer }
+allow system_suspend_server hal_camera_default binder transfer
+allow hal_camera_default system_suspend_server fd use

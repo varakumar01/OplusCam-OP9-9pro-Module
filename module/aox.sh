@@ -1,10 +1,11 @@
 #!/system/bin/sh
-# aox camera changes for ROMs that do not include them.
+# OplusCamera and the aox camera changes, for ROMs that do not include them.
 # Sourced by customize.sh (install) and post-fs-data.sh (media mount).
 #
-# Libraries listed in aox/files.txt were staged by build.py. Each one is
-# kept only if its install rule matches this device and every DT_NEEDED
-# library it lists can be found; otherwise the device copy stays.
+# The camera app (aox/app.txt) is installed unless the ROM already ships the
+# same or a newer one. Files listed in aox/files.txt were staged by build.py.
+# Each one is kept only if its install rule matches this device and every
+# DT_NEEDED library it lists can be found; otherwise the device copy stays.
 # Text configuration edits (aox/edits.txt) are applied to the copy the
 # module already ships, else to this device's own file. Edits that do not
 # match are skipped and logged, never forced.
@@ -12,6 +13,13 @@
 AOX_DIR=aox
 # Device root; host tests point this at a fixture tree.
 AOX_ROOT=${AOX_ROOT:-}
+# lemonade (OnePlus 9) or lemonadep (9 Pro); customize.sh sets it.
+AOX_DEVICE=${AOX_DEVICE:-}
+# Where a running copy of this module has its image mounted, and its
+# directory. What that copy overlays hides the ROM's own file, so "the device
+# already has it" would be this module's doing: such files are provided again.
+AOX_OLD=${AOX_OLD-/mnt/ooscamera}
+AOX_OLD_MODULE=${AOX_OLD_MODULE-/data/adb/modules/ooscamera_op9}
 
 aox_log() {
     echo "$*" >> "$AOX_LOG"
@@ -33,6 +41,28 @@ aox_sha256() {
     sha256sum "$1" 2>/dev/null | cut -d ' ' -f 1
 }
 
+# True when the running copy of this module provides this device path.
+aox_ours() {
+    [ -n "$AOX_OLD" ] || return 1
+    case "$1" in
+        odm/*) [ -e "$AOX_OLD/vendor/$1" ] ;;
+        system/*) [ -e "$AOX_OLD/${1#system/}" ] ;;
+        *) [ -e "$AOX_OLD/$1" ] ;;
+    esac
+}
+
+# aox_version_ge A B: dotted numeric versions, A >= B.
+aox_version_ge() {
+    awk -v a="$1" -v b="$2" 'BEGIN {
+        n = split(a, x, "."); m = split(b, y, ".")
+        for (i = 1; i <= (n > m ? n : m); i++) {
+            if (x[i] + 0 > y[i] + 0) exit 0
+            if (x[i] + 0 < y[i] + 0) exit 1
+        }
+        exit 0
+    }'
+}
+
 # ---------------------------------------------------------------------------
 # Edit primitives. Each prints the result to stdout and returns
 #   0 changed, 1 already in the wanted state, 2 anchor/expected value missing.
@@ -49,26 +79,35 @@ aox_edit_tag() {
             rest = substr(rest, RLENGTH + 1)
             return substr(rest, 1, index(rest, "\"") - 1)
         }
+        # Replace the quoted value of "key" on a line, keeping the rest.
+        function set(text, key, value,    p, head, rest) {
+            p = index(text, "\"" key "\"")
+            head = substr(text, 1, p + length(key) + 1)
+            rest = substr(text, p + length(key) + 2)
+            match(rest, /^[ \t]*:[ \t]*"/)
+            head = head substr(rest, 1, RLENGTH)
+            rest = substr(rest, RLENGTH + 1)
+            return head value substr(rest, index(rest, "\""))
+        }
         { line[++n] = $0 }
         END {
             for (i = 1; i <= n; i++) {
                 if (quoted(line[i], "VendorTag") != tag) continue
+                # Value and Count lines of this entry (a list value may grow).
+                jv = 0; jc = 0
                 for (j = i + 1; j <= n && line[j] !~ /^[ \t]*}/; j++) {
-                    if (!index(line[j], "\"Value\"")) continue
-                    current = quoted(line[j], "Value")
-                    if (current == to) exit 1
-                    if (from != "*" && current != from) exit 2
-                    p = index(line[j], "\"Value\"")
-                    head = substr(line[j], 1, p + 6)
-                    rest = substr(line[j], p + 7)
-                    match(rest, /^[ \t]*:[ \t]*"/)
-                    head = head substr(rest, 1, RLENGTH)
-                    rest = substr(rest, RLENGTH + 1)
-                    line[j] = head to substr(rest, index(rest, "\""))
-                    for (k = 1; k <= n; k++) print line[k]
-                    exit 0
+                    if (index(line[j], "\"Value\"")) jv = j
+                    if (index(line[j], "\"Count\"")) jc = j
                 }
-                exit 2
+                if (!jv) exit 2
+                current = quoted(line[jv], "Value")
+                same = (!jc || quoted(line[jc], "Count") == count)
+                if (current == to && same) exit 1
+                if (from != "*" && current != from) exit 2
+                line[jv] = set(line[jv], "Value", to)
+                if (jc) line[jc] = set(line[jc], "Count", count)
+                for (k = 1; k <= n; k++) print line[k]
+                exit 0
             }
             if (from != "*") exit 2
             # Append after the last object, before the closing bracket.
@@ -208,6 +247,26 @@ aox_edit_block() {
         }' "$1"
 }
 
+# Add a "key":"value", line after the line holding "anchor", with its indent.
+aox_edit_after() {
+    awk -v anchor="$2" -v key="$3" -v value="$4" '
+        { line[++n] = $0 }
+        END {
+            at = 0
+            for (i = 1; i <= n; i++) {
+                if (index(line[i], "\"" key "\"")) exit 1
+                if (!at && index(line[i], "\"" anchor "\"")) at = i
+            }
+            if (!at) exit 2
+            match(line[at], /^[ \t]*/)
+            cr = (line[at] ~ /\r$/) ? "\r" : ""
+            for (i = 1; i <= at; i++) print line[i]
+            print substr(line[at], 1, RLENGTH) "\"" key "\":\"" value "\"," cr
+            for (i = at + 1; i <= n; i++) print line[i]
+            exit 0
+        }' "$1"
+}
+
 # Raise maxBitRate inside <AudioEncoderCap name="NAME" ... /> to at least TO.
 aox_edit_audio_cap() {
     awk -v name="$2" -v to="$3" '
@@ -264,9 +323,16 @@ aox_apply() {
 }
 
 aox_apply_edits() {
+    # "only|device|" lines apply to that phone alone.
+    awk -F '|' -v device="$AOX_DEVICE" '
+        $1 == "only" { if ($2 != device) next; sub(/^only\|[^|]*\|/, "") }
+        { print }' "$MODPATH/$AOX_DIR/edits.txt" > "$MODPATH/$AOX_DIR/edits.device"
     while IFS='|' read -r op path a b c d e; do
         case "$op" in ''|'#'*) continue ;; esac
         case "$op" in
+            after)
+                aox_apply "$path" "$path: $b=$c" \
+                    aox_edit_after_at "$a" "$b" "$c" ;;
             tag)
                 aox_apply "$path" "$path: $a=$e" \
                     aox_edit_tag_at "$a" "$b" "$c" "$d" "$e" ;;
@@ -299,13 +365,15 @@ aox_apply_edits() {
             *)
                 aox_log "skip  unknown edit $op" ;;
         esac
-    done < "$MODPATH/$AOX_DIR/edits.txt"
+    done < "$MODPATH/$AOX_DIR/edits.device"
+    rm -f "$MODPATH/$AOX_DIR/edits.device"
 }
 
 # Primitive wrappers for aox_apply: the working copy is the last argument.
 aox_edit_tag_at() { aox_edit_tag "$6" "$1" "$2" "$3" "$4" "$5"; }
 aox_edit_ini_at() { aox_edit_ini "$5" "$1" "$2" "$3" "$4"; }
 aox_edit_modekey_at() { aox_edit_modekey "$5" "$1" "$2" "$3" "$4"; }
+aox_edit_after_at() { aox_edit_after "$4" "$1" "$2" "$3"; }
 
 # A comma-separated group of blocks is applied together or not at all.
 aox_apply_blocks() {
@@ -341,6 +409,12 @@ aox_apply_media() {
         [ -f "$AOX_ROOT$live" ] || continue
         staged="$MODPATH/$AOX_DIR/media$live"
         mkdir -p "${staged%/*}"
+        # Already bound over the device file by the running copy: keep it.
+        if [ -n "$AOX_OLD_MODULE" ] && [ -f "$AOX_OLD_MODULE/$AOX_DIR/media$live" ]; then
+            cp "$AOX_OLD_MODULE/$AOX_DIR/media$live" "$staged"
+            aox_log "keep  $live: $name maxBitRate (from the installed module)"
+            continue
+        fi
         aox_edit_audio_cap "$AOX_ROOT$live" "$name" "$to" > "$staged.new"
         case $? in
             0) mv "$staged.new" "$staged"; aox_log "apply $live: $name maxBitRate=$to" ;;
@@ -361,7 +435,7 @@ aox_commit_configs() {
         target=$(aox_staged "$path")
         reference=$target
         [ -f "$reference" ] || reference=$(aox_live "$path")
-        if ! cmp -s "$copy" "$reference"; then
+        if aox_ours "$path" || ! cmp -s "$copy" "$reference"; then
             mkdir -p "${target%/*}"
             cat "$copy" > "$target"
             echo "$path" >> "$MODPATH/$AOX_DIR/configs.txt"
@@ -394,23 +468,38 @@ aox_have_lib() {
     return 1
 }
 
-# files.txt: path|rule|sha256|replace sha256s (comma)|needed (comma)
+# files.txt: path|rule|sha256|replace sha256s (comma)|needed (comma)|device
 aox_select_libraries() {
     list="$MODPATH/$AOX_DIR/files.txt"
     [ -f "$list" ] || return 0
     : > "$MODPATH/$AOX_DIR/installed.txt"
-    while IFS='|' read -r path rule digest replace needed; do
+    while IFS='|' read -r path rule digest replace needed device; do
         case "$path" in ''|'#'*) continue ;; esac
         staged=$(aox_staged "$path")
+        if [ -n "$device" ]; then
+            # A per-device file: only this phone's variant is staged.
+            [ "$device" = "$AOX_DEVICE" ] || continue
+            mkdir -p "${staged%/*}"
+            mv "$MODPATH/$AOX_DIR/variants/$device/$path" "$staged"
+        fi
         [ -f "$staged" ] || continue
+        if [ "$rule" = pair ] && [ "$AOX_APP" = rom ]; then
+            rm -f "$staged"
+            aox_log "skip  /$path: belongs to the ROM's own camera"
+            continue
+        fi
         live=$(aox_live "$path")
         current=
         [ -f "$live" ] && current=$(aox_sha256 "$live")
         keep=0
-        if [ "$current" = "$digest" ]; then
+        if aox_ours "$path"; then
+            keep=1
+        elif [ "$current" = "$digest" ]; then
             reason="device already has this version"
         else
             case "$rule" in
+                pair)
+                    keep=1 ;;
                 add)
                     if [ -z "$current" ]; then keep=1; else reason="device has its own copy"; fi ;;
                 add-or-replace|replace)
@@ -463,6 +552,117 @@ aox_select_libraries() {
     while IFS='|' read -r path needed; do
         aox_log "add   /$path"
     done < "$MODPATH/$AOX_DIR/installed.txt"
+    rm -rf "$MODPATH/$AOX_DIR/variants"
+}
+
+# ---------------------------------------------------------------------------
+# The camera app.
+
+# Print "codePath versionName" of the system copy of com.oplus.camera, if any.
+# An update under /data is skipped: dumpsys lists the hidden system package too.
+aox_system_camera() {
+    if [ -n "${AOX_CAMERA_DUMP-}" ]; then cat "$AOX_CAMERA_DUMP"; else dumpsys package com.oplus.camera 2>/dev/null; fi |
+        awk '{
+            sub(/^[ \t]+/, "")
+            if ($0 ~ /^codePath=/) path = substr($0, 10)
+            else if ($0 ~ /^versionName=/ && path != "" && path !~ /^\/data\//) {
+                print path, substr($0, 13); exit
+            }
+        }'
+}
+
+# Decide who provides the camera app: AOX_APP=install (the ROM has none),
+# replace (the ROM has an older one) or rom (same or newer: keep the ROM's).
+aox_decide_app() {
+    AOX_APP=install
+    wanted=$(cat "$MODPATH/$AOX_DIR/app-version.txt")
+    read -r code version <<EOF
+$(aox_system_camera)
+EOF
+    default=system_ext/priv-app/OplusCamera
+    if [ -z "$code" ]; then
+        aox_log "app   no system OplusCamera on this ROM: installing $wanted"
+        return 0
+    fi
+    case "$code" in
+        /system_ext/priv-app/*|/product/priv-app/*) relative=${code#/} ;;
+        /system/priv-app/*) relative=${code#/system/} ;;
+        *) relative= ;;
+    esac
+    if [ -n "$relative" ] && aox_ours "$relative"; then
+        aox_log "app   OplusCamera $version at $code is this module's: installing $wanted"
+    elif [ -n "$version" ] && aox_version_ge "$version" "$wanted"; then
+        AOX_APP=rom
+        aox_log "app   the ROM ships OplusCamera $version at $code: keeping it, fixes only"
+        while IFS= read -r path; do
+            rm -f "$MODPATH/$path"
+        done < "$MODPATH/$AOX_DIR/app.txt"
+        rm -f "$MODPATH/system/framework/oplus-fwk.jar"
+        return 0
+    elif [ -z "$relative" ]; then
+        aox_log "app   the ROM ships OplusCamera $version at $code, which this module cannot overlay"
+        return 1
+    else
+        AOX_APP=replace
+        aox_log "app   the ROM ships OplusCamera ${version:-?} at $code: replacing it with $wanted"
+    fi
+    # Same directory and file name as the copy being replaced.
+    name=
+    for apk in "$AOX_ROOT$code"/*.apk; do
+        [ -f "$apk" ] && { name=${apk##*/}; break; }
+    done
+    if [ "$relative" != "$default" ] || [ "${name:-OplusCamera.apk}" != OplusCamera.apk ]; then
+        mkdir -p "$MODPATH/system/$relative"
+        mv "$MODPATH/system/$default/OplusCamera.apk" \
+            "$MODPATH/system/$relative/${name:-OplusCamera.apk}"
+        rmdir -p "$MODPATH/system/$default" 2>/dev/null
+    fi
+    return 0
+}
+
+# The 5.x app needs classes older oplus-fwk.jar builds lack. Keep the staged
+# boot jar only when the ROM's own lacks one of them.
+aox_decide_framework() {
+    jar="$MODPATH/system/framework/oplus-fwk.jar"
+    [ -f "$jar" ] || return 0
+    if aox_ours system/framework/oplus-fwk.jar; then
+        aox_log "fwk   oplus-fwk.jar is this module's: providing it again"
+        return 0
+    fi
+    live="$AOX_ROOT/system/framework/oplus-fwk.jar"
+    missing=
+    while IFS= read -r marker; do
+        unzip -p "$live" 'classes*.dex' 2>/dev/null | grep -qF "$marker" || { missing=$marker; break; }
+    done < "$MODPATH/$AOX_DIR/fwk-markers.txt"
+    if [ -z "$missing" ]; then
+        rm -f "$jar"
+        aox_log "fwk   the ROM's oplus-fwk.jar has the classes this camera needs"
+    else
+        aox_log "fwk   the ROM's oplus-fwk.jar lacks $missing: overlaying this module's"
+        ui_print "This ROM's oplus-fwk.jar is too old for this camera; the module"
+        ui_print "replaces it. If the next boot fails, the module disables itself."
+    fi
+}
+
+# With this module's app in use, its paired libraries must be in place.
+aox_check_pairs() {
+    [ "$AOX_APP" = rom ] && return 0
+    [ -f "$MODPATH/$AOX_DIR/files.txt" ] || return 0
+    while IFS='|' read -r path rule digest replace needed device; do
+        [ "$rule" = pair ] || continue
+        [ -z "$device" ] || [ "$device" = "$AOX_DEVICE" ] || continue
+        [ -f "$(aox_staged "$path")" ] && continue
+        [ "$(aox_sha256 "$(aox_live "$path")")" = "$digest" ] && continue
+        aox_log "fail  /$path cannot be installed; the camera would not start"
+        return 1
+    done < "$MODPATH/$AOX_DIR/files.txt"
+    return 0
+}
+
+# Remove payload directories left empty by the decisions above.
+aox_prune() {
+    find "$MODPATH/system" -depth -type d -exec rmdir {} \; 2>/dev/null
+    return 0
 }
 
 # ---------------------------------------------------------------------------
@@ -472,14 +672,19 @@ aox_install() {
     [ -d "$MODPATH/$AOX_DIR" ] || return 0
     AOX_LOG="$MODPATH/aox.log"
     : > "$AOX_LOG"
+    aox_log "device $AOX_DEVICE"
     ui_print "Applying aox camera changes where this ROM lacks them."
+    if [ -f "$MODPATH/$AOX_DIR/app.txt" ]; then
+        aox_decide_app || return 1
+        aox_decide_framework
+    fi
     aox_select_libraries
+    aox_check_pairs || return 1
     aox_apply_edits
     aox_commit_configs
-    # The adsp overlay is mounted only when it carries a file.
-    rmdir -p "$MODPATH/system/vendor/odm/lib/rfsa/adsp" 2>/dev/null
+    aox_prune
     applied=$(grep -c '^apply\|^add' "$AOX_LOG")
-    ui_print "aox: $applied change(s) applied; details in aox.log."
+    ui_print "aox: camera app: $AOX_APP; $applied change(s) applied; details in aox.log."
 }
 
 # Give staged replacements the device file's SELinux label (after the
@@ -494,7 +699,9 @@ aox_label() {
             [ -f "$staged" ] || continue
             case "$path" in
                 */lib/rfsa/adsp/*|*/etc/*)
-                    [ -f "$live" ] && chcon --reference="$live" "$staged" ;;
+                    # A new file takes its directory's label.
+                    [ -e "$live" ] || live=${live%/*}
+                    [ -e "$live" ] && chcon --reference="$live" "$staged" ;;
             esac
         done < "$MODPATH/$AOX_DIR/$list"
     done

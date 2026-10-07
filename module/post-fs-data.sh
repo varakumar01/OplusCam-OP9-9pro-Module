@@ -8,6 +8,13 @@ if [ -f "$MODDIR/aox.sh" ]; then
     . "$MODDIR/aox.sh"
     aox_mount_media
 fi
+# Live Photo working directories. The ROM trees create them from
+# /odm/etc/init/init.camera_process.rc, which init reads before modules mount.
+for dir in /data/vendor/camera_process /data/vendor/camera_process/livephoto; do
+    [ -d "$dir" ] && continue
+    mkdir "$dir" && chown camera:camera "$dir" && chmod 0777 "$dir" &&
+        chcon --reference=/data/vendor/camera "$dir"
+done
 RESETPROP=/data/adb/ksu/bin/resetprop
 [ -x "$RESETPROP" ] || RESETPROP=/data/adb/ksud
 append_camera() {
