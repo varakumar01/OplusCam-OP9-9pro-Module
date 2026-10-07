@@ -15,10 +15,10 @@ CONTROL_FILES = {
     "module.prop", "customize.sh", "post-fs-data.sh", "action.sh",
     "mount-camera.sh", "boot-completed.sh", "skip_mount",
     "service.sh", "uninstall.sh", "visibility.sh", "ksu-visibility", "visibility-source.json",
-    "native-labels.txt", "native-source.json", "provenance.json", "filter-source.json",
-    "blur-source.json", "retouch-source.json", "gralloc-source.json", "gralloc32-source.json", "camera-patches.json",
+    "native-labels.txt", "native-source.json", "provenance.json",
+    "gralloc-source.json", "gralloc32-source.json",
     "aox.sh", "sepolicy.rule", "aox-source.json",
-    "aox/edits.txt", "aox/files.txt",
+    "aox/edits.txt", "aox/files.txt", "aox/app.txt", "aox/app-version.txt", "aox/fwk-markers.txt",
 }
 PRIVATE_KEY = re.compile(
     rb"-----BEGIN (?:RSA |EC |ENCRYPTED )?PRIVATE KEY-----\s+"
@@ -36,6 +36,11 @@ def allowed_payload(name):
         return True
     if name.startswith("aox/blocks/") and name.endswith((".old", ".new")):
         return True
+    # Per-device files and the 5.x filter tables and models.
+    if name.startswith(("aox/variants/lemonade/odm/", "aox/variants/lemonadep/odm/",
+                        "system/vendor/odm/etc/camera/meishe_lut/",
+                        "system/vendor/odm/etc/camera/filters_lut/")):
+        return True
     if name.startswith("system/vendor/odm/lib/rfsa/adsp/") and name.endswith(".so"):
         return True
     if name.startswith(("system/framework/", "system/system_ext/framework/")) and name.endswith(".jar"):
@@ -45,6 +50,8 @@ def allowed_payload(name):
         return True
     return name in {
         "system/vendor/odm/etc/camera/config/oplus_camera_config",
+        "system/vendor/odm/etc/camera/selfbokehmodel.bin",
+        "system/vendor/odm/etc/camera/selfbokehParam.json",
         "system/vendor/odm/etc/camera/config/camera_unit_feature_config.protobuf",
         "system/vendor/odm/etc/camera/license_release_fdc.lic",
         "system/vendor/odm/etc/camera/model/license.lic",
@@ -90,30 +97,15 @@ def audit(archive_path, identifiers):
                         location = entry.filename + "!/" + member.filename
                         scan(location, nested.read(member))
                         scan(location + " [metadata]", member.filename.encode() + member.extra + member.comment)
-                        if entry.filename == CAMERA_APK and member.date_time != EPOCH:
-                            errors.append(f"Non-normalized APK timestamp: {member.filename}")
 
         provenance = json.loads(archive.read("provenance.json"))
-        expected = {"donor_url", "donor_revision", "camera_apk_sha256",
-                    "installed_apk_sha256", "status", "files"}
-        if set(provenance) != expected:
+        if set(provenance) != {"sources", "status", "files"}:
             errors.append("Unexpected provenance fields")
         if set(provenance["files"]) != set(names) - {"provenance.json"}:
             errors.append("Incomplete payload checksum manifest")
         for name, digest in provenance["files"].items():
             if hashlib.sha256(archive.read(name)).hexdigest() != digest:
                 errors.append(f"Checksum mismatch: {name}")
-        if hashlib.sha256(archive.read(CAMERA_APK)).hexdigest() != provenance["installed_apk_sha256"]:
-            errors.append("Camera APK checksum mismatch")
-        if "camera-patches.json" in names:
-            patches = json.loads(archive.read("camera-patches.json"))
-            if set(patches) != {"donor_revision", "source_files", "files", "patches"}:
-                errors.append("Unexpected camera patch provenance fields")
-            if patches["donor_revision"] != provenance["donor_revision"]:
-                errors.append("Camera patch donor revision mismatch")
-            for name, digest in patches["files"].items():
-                if hashlib.sha256(archive.read(name)).hexdigest() != digest:
-                    errors.append(f"Camera patch checksum mismatch: {name}")
         # Builds without --native-cache (no device collection) have no manifest.
         native = json.loads(archive.read("native-source.json")) if "native-source.json" in names else []
         for entry in native:
@@ -147,28 +139,22 @@ def audit(archive_path, identifiers):
                 errors.append("ARMv7 graphics candidate lacks ARM64 counterpart")
             if hashlib.sha256(archive.read(payload)).hexdigest() != source.get("patched_sha256"):
                 errors.append("Graphics candidate checksum mismatch")
-        for filename in ("filter-source.json", "blur-source.json", "retouch-source.json"):
-            if filename not in names:
-                continue
-            source = json.loads(archive.read(filename))
-            schemas = ({"repository", "revision", "files"},
-                       {"repository", "revision", "files", "source_files", "patches"})
-            if filename == "blur-source.json":
-                schemas = ({"repository", "revision", "files", "source_files", "patches", "firmware_loader"},)
-                if set(source.get("firmware_loader", {})) != {"path", "sha256"}:
-                    errors.append("Unexpected blur firmware provenance fields")
-            if set(source) not in schemas:
-                errors.append(f"Unexpected provenance fields in {filename}")
-            for name, digest in source["files"].items():
-                path = "system/vendor/odm/lib64/" + name
-                if hashlib.sha256(archive.read(path)).hexdigest() != digest:
-                    errors.append(f"OEM source checksum mismatch: {name}")
         if "aox-source.json" in names:
             source = json.loads(archive.read("aox-source.json"))
             for path, digest in source.get("files", {}).items():
-                parts = pathlib.PurePosixPath(path).parts
-                payload = ("system/vendor/" if parts[0] == "odm" else "system/") + path
-                if payload not in names or hashlib.sha256(archive.read(payload)).hexdigest() != digest:
+                # "device:path" entries wait under aox/variants/<device>/.
+                device, _, path = path.rpartition(":")
+                root = pathlib.PurePosixPath(path).parts[0]
+                if device:
+                    payload = f"aox/variants/{device}/{path}"
+                elif root == "system":
+                    payload = path
+                else:
+                    payload = ("system/vendor/" if root == "odm" else "system/") + path
+                if payload not in names:
+                    errors.append(f"aox file missing: {path}")
+                # The camera APK is signed at build time; provenance.json covers it.
+                elif payload != CAMERA_APK and hashlib.sha256(archive.read(payload)).hexdigest() != digest:
                     errors.append(f"aox checksum mismatch: {path}")
 
     return {"passed": not errors, "module_entries": len(names),

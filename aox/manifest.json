@@ -1,56 +1,382 @@
 {
-  "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonade",
   "branch": "aox",
-  "revision": "909a41d6d01def82eba4cdfd320cf3815378dbf3",
-  "base_revision": "f7ae8758b68e7213219b15a7d8fe70bf0adc2f06",
-  "window": "2026-09-30/2026-10-06",
-  "device_repository": "https://github.com/varakumar01/android_device_oneplus_lemonade",
-  "device_revision": "09a7223f9af2a9c22b4ce5ce6b5ffa2e15e4e96f",
-  "device_media_base_revision": "43e90b9ee7a54f9fc782f49ea9c6e7855790115d",
-  "device_media_revision": "7c8d1f0f01dace363ab84501fd93834aac22c81f",
-  "hardware_repository": "https://github.com/varakumar01/android_hardware_oplus",
-  "hardware_revision": "fc0d19d9377aaec0494e2d7b2671fb6696516a93",
-  "common_repository": "https://github.com/varakumar01/android_device_oneplus_sm8350-common",
-  "common_revision": "86c49b74a12090105dcd9f6242a9fa6924db8a69",
-  "module_owned": [
-    "odm/lib64/libFilterWrapper.so"
+  "app_version": "5.045.451",
+  "sources": {
+    "camera": {
+      "repository": "https://github.com/varakumar01/vendor_oplus_camera",
+      "revision": "2ba0413b102756ae44daae5cbe519f803dceef16"
+    },
+    "vendor": {
+      "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonade",
+      "revision": "2f8123369f08ac3952005e5eb30bad4ca272b3d3"
+    },
+    "vendor_pro": {
+      "repository": "https://github.com/varakumar01/proprietary_vendor_oneplus_lemonadep",
+      "revision": "ea3e9e8daa58933108205036392227f5f197de93"
+    },
+    "device": {
+      "repository": "https://github.com/varakumar01/android_device_oneplus_lemonade",
+      "revision": "e2acce4e1e8d6cd06677ed603a0e6c7bf6239483"
+    },
+    "hardware": {
+      "repository": "https://github.com/varakumar01/android_hardware_oplus",
+      "revision": "6274e198c045aa6fed1f7286446e2f4ea54748c7"
+    },
+    "common": {
+      "repository": "https://github.com/varakumar01/android_device_oneplus_sm8350-common",
+      "revision": "00d3f0990891e3e85415c0c62dbd5fa5fb67690b"
+    }
+  },
+  "replace_extra": {
+    "lemonadep:odm/etc/camera/config/camera_unit_feature_config.protobuf": [
+      "71c9edd09325d545cc0d461b8a69d3d9338ac5fd38f705036beabb3f71e420f9",
+      "217d72e1456ec6f759f1e8d8ddd6d5b8824b157b1b9e8f7f23fecdd11585becb"
+    ]
+  },
+  "fixtures": {
+    "lemonade": {
+      "source": "vendor",
+      "base": "f7ae8758b68e7213219b15a7d8fe70bf0adc2f06"
+    },
+    "lemonadep": {
+      "source": "vendor_pro",
+      "base": "e786d778951ab5025605599571b33ceaa1b47fe2"
+    },
+    "media": {
+      "source": "device",
+      "base": "43e90b9ee7a54f9fc782f49ea9c6e7855790115d"
+    }
+  },
+  "fwk_markers": [
+    "Lcom/oplus/wrapper/hardware/camera2/CaptureResult;",
+    "Lcom/oplus/view/ViewRootManager;",
+    "Lcom/oplus/app/IOplusProtectConnection;"
+  ],
+  "inputs": [
+    {
+      "name": "privapp-permissions-oplus.xml",
+      "source": "camera",
+      "src": "configs/permissions/privapp-permissions-oplus.xml",
+      "sha256": "96fc33d2ecdac83ceb6893a93cbdac2cb1542383efbda5ce8480d75ae43119ac"
+    },
+    {
+      "name": "file_contexts",
+      "source": "camera",
+      "src": "sepolicy/vendor/file_contexts",
+      "sha256": "fe1ef46510a6f6724ae7a4a446c8c0efc8e0cce54592f9fc15c39e4c137fd1a5"
+    },
+    {
+      "name": "oplus-fwk.jar",
+      "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19.jar",
+      "sha256": "2deb110b903f8f6ec740cd67168de1ccc45448e77d224538f4c6698c25424112",
+      "note": "oplus-fwk built from the hardware source revision with javac and D8"
+    }
   ],
   "files": [
     {
-      "path": "odm/etc/camera/config/camera_unit_feature_config.protobuf",
-      "sha256": "11119ecf589e8c7c5b928c6a93e77ec69864c9a2644dd055ca1ffd8daafb747a",
-      "size": 40518,
-      "kind": "binary-config",
-      "install": "replace",
-      "replace_sha256": [
-        "8bd91ae1afdcae05c09bbc209799a30585749c030731f0ad5eefc546b0c6c456"
-      ]
+      "path": "system_ext/priv-app/OplusCamera/OplusCamera.apk",
+      "source": "camera",
+      "parts": [
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part00",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part01",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part02",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part03",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part04",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part05",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part06",
+        "proprietary/system_ext/priv-app/OplusCamera/OplusCamera.apk.part07"
+      ],
+      "group": "app",
+      "kind": "apk",
+      "sha256": "4696a76d9847c51e8a187fb45afc750b75abddc4c81fd2a4d3bd97e7f809bb78",
+      "size": 156403942
     },
     {
-      "path": "odm/lib/rfsa/adsp/libarcsoft_hdrplus_hvx_skel_lemonade.so",
-      "sha256": "2454a98fa11e1ebc041d377e683a3c6152e96c77a364eae854c244410ede10eb",
-      "size": 517368,
-      "kind": "adsp",
-      "install": "replace",
-      "replace_sha256": [
-        "0a74fc6e35f14faf1c7d226c12b1be10a918a7e5698d551778d7b4aa49e03726"
-      ]
+      "path": "odm/etc/camera/license_release_fdc.lic",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "7f5e9ba9a4413c211466fd1eb383c48c5c36c2c72bcb46383bb0479b1b3129e1",
+      "size": 2110
     },
     {
-      "path": "odm/lib/rfsa/adsp/libarcsoft_portraitsn_hvx_skel_20031.so",
-      "sha256": "8495cb01b1cff399b3d32eed972b6089cf1c0fc96980cab9ebdc30a6ec1579de",
-      "size": 512152,
-      "kind": "adsp",
-      "install": "replace",
-      "replace_sha256": [
-        "daa283f932ed2cbba4183ad959137c542ef728c34879b20ffe3d09ed8e7c2625"
-      ]
+      "path": "odm/etc/camera/model/license.lic",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "a0cb2a30bbf483bc0e1d7890c8f2204105e58b122408099479cc6199c26f2ff2",
+      "size": 910
     },
     {
-      "path": "odm/lib64/lib2DSlender.so",
-      "sha256": "8219b2475c9cce095f550d99b30f3ec767be339ca1c3f0038096a131dd55bc02",
-      "size": 8058944,
+      "path": "odm/etc/camera/singleblur/license_release.lic",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "f7af95845a53adf641274b533de49e09bcc53ba55d9326c8fbf1ec0676d68f1b",
+      "size": 2301
+    },
+    {
+      "path": "odm/etc/camera/singleblur/license_release.license",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "b3f23d68e561574d0acfd1901b51df5aade717726547330c1461a0081c7975c9",
+      "size": 2301
+    },
+    {
+      "path": "system/framework/oplus-support-wrapper.jar",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "02091ddfcb2b0ffbf9e6160234ea98ed739b2605b9eda5d2770450de983d133f",
+      "size": 96109
+    },
+    {
+      "path": "system_ext/etc/default-permissions/oplus_camera_default_grant_permissions_list.xml",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "2ac7990bc1ffe4e6e3d297fee772faa6365027c7dbe8df8ece466d51824fcc76",
+      "size": 905
+    },
+    {
+      "path": "system_ext/framework/com.oplus.camera.unit.sdk.adapter.jar",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "1a7cc0996f6c1f5b87981f6f1df8de757ccdc7009a356036675abd71efe8f677",
+      "size": 2940459
+    },
+    {
+      "path": "system_ext/framework/com.oplus.camera.unit.sdk.jar",
+      "source": "camera",
+      "group": "app",
+      "kind": "data",
+      "sha256": "25c65172bdf3faedf4321cf4e4a5726c14ef4fb0bcb104f2d5dbbc7bbe5ee9ea",
+      "size": 4794127
+    },
+    {
+      "path": "system_ext/lib64/libAPSClient-cmd-jni.so",
+      "source": "camera",
+      "group": "app",
       "kind": "library",
+      "sha256": "b6669463a2dbdc22d20d0bb1a565ef9f1cc058f5f34c627a8d49971f7c509bec",
+      "size": 1036632,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libnativewindow.so",
+        "libjnigraphics.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAPSClient-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "f108594528f2c191d2ce59165d20335415d87233fd1d681625897058e7414047",
+      "size": 1111808,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libnativewindow.so",
+        "libjnigraphics.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncFilter_jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "6a7c9150300ef9daec97ca7eae1917d119ef89710fa5c9f40687db05f17b99a0",
+      "size": 817352,
+      "needed": [
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncHumBokeh-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "6c8593cc045e59fa38cbe7e2a09984f63779dfc58cb3521a68cd356d3ed9a7df",
+      "size": 264616,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncHumanDoubleExposure-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "a85f011191b93e589db6b89c7f686f1fc4dcbe2a54d3040b3588bef8002d1878",
+      "size": 330016,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libandroid.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncHumanRetain-jni_v2.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "a215ec369939e920325aa1109a16df5d510136dc338c906e24fe809acf9aa851",
+      "size": 321824,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libandroid.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncHumanSegFigureFusion-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "af7f8d7d40174d6052d833a96104c2cb0925bd1cd15b47e16ebdc73c0cf33a14",
+      "size": 253976,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libandroid.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAncHumanVideo-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "369e7f0db2b1b57c574cbdced5b2188a8362fb7aa9116ee0c178730e71821de1",
+      "size": 264536,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libApsFaceBeautyPreviewProductJni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "d2993de37d1fd9155e0d589948f496ebeddcbdabbdd189a1b27b0c00200703a2",
+      "size": 783169,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libjnigraphics.so",
+        "libEGL.so",
+        "libGLESv1_CM.so",
+        "libGLESv3.so",
+        "libz.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libApsSuperEISPreviewJni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "9b4d9afe4b219fdad4692b8f6f68e23201ad11c6d583ebbd9edd9086e0ec1975",
+      "size": 555120,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libjnigraphics.so",
+        "libEGL.so",
+        "libGLESv1_CM.so",
+        "libGLESv3.so",
+        "libz.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAvatarEngineRender.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "8c3484834fe71fc5e5b288dac64b98b916a678d5eebee60e843560eb04608c88",
+      "size": 2922880,
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libandroid.so",
+        "libz.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libstdc++.so",
+        "libm.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libAvatarEngineRenderNative.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "744fdcf12260b43a7198292831bb11e8ef7c96deda0d460f4357c64e8e01e29c",
+      "size": 2935440,
+      "needed": [
+        "libAvatarEngineRender.so",
+        "liblog.so",
+        "libdl.so",
+        "libandroid.so",
+        "libz.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libstdc++.so",
+        "libm.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libCombineLut.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "793b4076808a9f18ced81c1fc962ae3efd6b015bf4d0dacf3b120dbf919d22b6",
+      "size": 416256,
       "needed": [
         "liblog.so",
         "libGLESv3.so",
@@ -58,14 +384,1410 @@
         "libdl.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libCombineLutJni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "35472d1dcb09f6e09ee346f35eb07ca863b5fa2debf68f2be41bc44aaf9f880b",
+      "size": 8048,
+      "needed": [
+        "libCombineLut.so",
+        "liblog.so",
+        "libandroid.so",
+        "libjnigraphics.so",
+        "libEGL.so",
+        "libGLESv1_CM.so",
+        "libGLESv3.so",
+        "libz.so",
+        "libc.so",
+        "libm.so",
+        "libstdc++.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libFileExtender-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "9129fc698e46d6aad83f67d71596dace97a2a7cf3843a76252a9514b0353fe9b",
+      "size": 18008,
+      "needed": [
+        "libextendfile.so",
+        "liblog.so",
+        "libandroid.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libHdrTransform-platform-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "e42f765433880f492a47672239e451e75ddde4f705b640efdbaf23bef416947d",
+      "size": 399464,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libnativewindow.so",
+        "libjnigraphics.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libHeifEncoderWrapper.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "8cb329600ed9b8fcba763333a94722d83ca04b6c3778d108b463d1d153c58f18",
+      "size": 19184,
+      "needed": [
+        "liboplusheifwriter.so",
+        "libutils.so",
+        "libstagefright.so",
+        "libstagefright_foundation.so",
+        "liblog.so",
+        "libmedia_omx.so",
+        "libmedia.so",
+        "libmedia_codeclist.so",
+        "libnativehelper.so",
+        "libandroid_runtime.so",
+        "libnativewindow.so",
+        "libui.so",
+        "libgui.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libMsEffectSdk.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "dd0b364ec4fe00b84cf357d1031d435949882ba2327f1d6b1edfaa867ca7df95",
+      "size": 370440,
+      "needed": [
+        "libvndksupport.so",
+        "libandroid.so",
+        "libjnigraphics.so",
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libNativeWinBuffExchange.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "fa0b1f8c2538ccb071633eda12821a23fa3871045009bff89c570af1fa6ff060",
+      "size": 11272,
+      "needed": [
+        "liblog.so",
+        "libutils.so",
+        "libnativewindow.so",
+        "libui.so",
+        "libgui.so",
+        "android.hardware.graphics.bufferqueue@1.0.so",
+        "android.hardware.graphics.bufferqueue@2.0.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libOplusBlurPreviewJNI.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "3f5452b91f58b0c597d09dc70fa6c1393da1fde4b5a86b90f03333e10a547728",
+      "size": 435600,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libOplusStringJNI.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "b773ad8a3e5d23ecf08ba9fe6bc683d0a629e1f89af7c18be8dc5f7ae2b0a67e",
+      "size": 12336,
+      "needed": [
+        "libvndksupport.so",
+        "liblog.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libstdc++.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libSuperTextWrapper.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "a9e46e888a703e57882715cc9ba67a68a0ac920367bad2447baa9b69ccb5686a",
+      "size": 1383704,
+      "needed": [
+        "liblog.so",
+        "libXDocProcessSDK.so",
+        "libYTCommon.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libXDocProcessSDK-jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "67f77e814a1b1d41f4760dc49393a5fdc72a741602362f7c49689fdca07a2646",
+      "size": 1573080,
+      "needed": [
+        "liblog.so",
+        "libjnigraphics.so",
+        "libvndksupport.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libXDocProcessSDK.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "b7a1f664880bef6f404533623331522793a9eafdf76df37eef4ba2d909fc4afa",
+      "size": 6958712,
+      "needed": [
+        "libdl.so",
+        "liblog.so",
+        "libYTCommon.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libc.so",
+        "libz.so",
+        "libm.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libYTCommon.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "56be5fbd6c7df8902f47bdbe507df7ec5be840db4b34a540fd22d009948e0542",
+      "size": 813392,
+      "needed": [
+        "liblog.so",
+        "libz.so",
+        "libm.so",
+        "libstdc++.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libarcsoft_panorama_burstcapture.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "502d65b2db056d1d6b2708e01dd99254504b0ea7037078c443e2e9337107f4ac",
+      "size": 633192,
+      "needed": [
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libarcsoft_wideselfie.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "13829f89e8e5d429fffe688b7b940444acdc149c90f0f0513ab48dcae94d47a1",
+      "size": 2824328,
+      "needed": [
+        "libmpbase.so",
+        "liblog.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libextendfile.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "c3d2eb0916fdb62947877fe57916a905005c576b64d1dca733458ada11a91c36",
+      "size": 977112,
+      "needed": [
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libjni_burstpmk.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "b69b2a7eebb2df0a90822ce0bf38716e78fd2ee20c4b392f3f80f37e4fab4aae",
+      "size": 26712,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libstdc++.so",
+        "libdl.so",
+        "libmpbase.so",
+        "libarcsoft_panorama_burstcapture.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libjni_wideselfie.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "654d44fa4bd00f359002421c2d05f5f4610bf6d4d1eaa9f4dcd4f17d5fa24405",
+      "size": 26688,
+      "needed": [
+        "libjnigraphics.so",
+        "liblog.so",
+        "libandroid.so",
+        "libc.so",
+        "libm.so",
+        "libstdc++.so",
+        "libdl.so",
+        "libarcsoft_wideselfie.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libjnisingleblur_api.qti.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "1cf51f84c452b696edd5f5fca653e6f1b4ae5b542a7c48b35187162ab15335e3",
+      "size": 481320,
+      "needed": [
+        "libz.so",
+        "libjnigraphics.so",
+        "libvndksupport.so",
+        "liblog.so",
+        "libGLESv2.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libjnisingleblur_api.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "1dd65d4ed2da2dea9a7f11d5887c80d15e7d258c9a492ac1c2f2b2a279c41c0a",
+      "size": 515304,
+      "needed": [
+        "libz.so",
+        "libjnigraphics.so",
+        "libvndksupport.so",
+        "liblog.so",
+        "libGLESv2.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libjnistblur_api.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "317e49213e37efa893abba80eebed631397e535be6fcf98d48123afe4bd6db75",
+      "size": 533536,
+      "needed": [
+        "libz.so",
+        "libjnigraphics.so",
+        "libvndksupport.so",
+        "liblog.so",
+        "libGLESv2.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/liblivephoto.frc.jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "75e2decf790244fe883cbc5b781f6c9e2f0d3efc1eb4f7586996b344351f557d",
+      "size": 402184,
+      "needed": [
+        "libvndksupport.so",
+        "libmpbase.so",
+        "liblog.so",
+        "libandroid.so",
+        "libjnigraphics.so",
+        "libnativewindow.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libmpbase.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "93aef8902c3e04aa0f542e2e44492bfbe13ea81a923d9d7663031998143c4af5",
+      "size": 6992,
+      "needed": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/liboplusheifwriter.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "c2406ef797a00314e8883bddddac97f58265b3975035587d555d8c723c2c6b5f",
+      "size": 177264,
+      "needed": [
+        "libutils.so",
+        "libcutils.so",
+        "libstagefright.so",
+        "libstagefright_foundation.so",
+        "liblog.so",
+        "libmedia_omx.so",
+        "libmedia.so",
+        "libmedia_codeclist.so",
+        "libnativehelper.so",
+        "libandroid_runtime.so",
+        "libnativewindow.so",
+        "libui.so",
+        "libgui.so",
+        "libbase.so",
+        "libjpeg.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libsingle_camera_bokeh_native.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "dc66f87870257c0493cd25bc7d4ffda80199901d71afa068bd9bedea0813feae",
+      "size": 1143600,
+      "needed": [
+        "liblog.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libnativewindow.so",
+        "libmpbase.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libst_mobile.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "a3455d5a2f35f467acd7d183d23a60b52d79d002e029b61b2079385ba60806cd",
+      "size": 7895520,
+      "needed": [
+        "libz.so",
+        "libGLESv2.so",
+        "libEGL.so",
+        "liblog.so",
+        "libm.so",
+        "libc.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "system_ext/lib64/libst_sticker_jni.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "a2301faeab5be2f60985ce7208993ce74fd452bc7361f38fd6f1216ea30d361d",
+      "size": 349961,
+      "needed": [
+        "liblog.so",
+        "libst_mobile.so",
+        "libandroid.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "vendor/lib64/libpenguin.so",
+      "source": "camera",
+      "group": "app",
+      "kind": "library",
+      "sha256": "c76e9e3c3397bc1efe50b78d879d93390c25ea8b99f556c43457e71c99cc2069",
+      "size": 15168,
+      "needed": [
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libAlgoInterface.so",
+      "source": "vendor",
+      "group": "pair",
+      "kind": "library",
+      "install": "pair",
+      "sha256": "b385229da2dbd00940feebfc1cc5838080c53859831a1a4652b76c440d65c387",
+      "size": 10639408,
+      "needed": [
+        "vendor.qti.hardware.camera.postproc@1.0.so",
+        "libqdMetaData.so",
+        "liblog.so",
+        "libcutils.so",
+        "libutils.so",
+        "libmpbase.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libnativewindow.so",
+        "libhidlbase.so",
+        "libAlgoProcess.so",
+        "libapsjpeg.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libAlgoProcess.so",
+      "source": "vendor",
+      "group": "pair",
+      "kind": "library",
+      "install": "pair",
+      "sha256": "70bcf0ae578ca7659a7e429c57f311f4f7d34e94154b7349867ebf2c30f0e372",
+      "size": 4881489,
+      "needed": [
+        "android.hardware.graphics.mapper@4.0.so",
+        "android.hardware.graphics.common-V7-ndk.so",
+        "libgralloctypes.so",
+        "libqdMetaData.so",
+        "vendor.qti.hardware.display.mapper@4.0.so",
+        "libgralloc.qti.so",
+        "vendor.qti.hardware.camera.postproc@1.0.so",
+        "libosenseaidlhalclient.so",
+        "vendor.oplus.hardware.osense.client-V1-ndk_platform.so",
+        "libion.so",
+        "libapsjpeg.so",
+        "libapsexif.so",
+        "liblog.so",
+        "libcutils.so",
+        "libutils.so",
+        "libutilscallstack.so",
+        "libmpbase.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libnativewindow.so",
+        "libhidlbase.so",
+        "libselinux.so",
+        "libexif-jpeg-aps.so",
+        "libextendfile.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libPreviewDecisionOld.so",
+      "source": "vendor",
+      "group": "pair",
+      "kind": "library",
+      "install": "pair",
+      "sha256": "41717f8911a9def048b3e17c156c2e2360e258069794ea939256771a09b0108d",
+      "size": 27533424,
+      "needed": [
+        "libAlgoProcess.so",
+        "libAlgoInterface.so",
+        "liblog.so",
+        "libcutils.so",
+        "libutils.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libFilterWrapper.so",
+      "source": "vendor",
+      "group": "pair",
+      "kind": "library",
+      "install": "pair",
+      "sha256": "8aa6ab56c9ec390506ad9f93f83a882b7e03fa9210af124238b812774362f1f6",
+      "size": 11072,
+      "needed": [
+        "liblog.so",
+        "libcutils.so",
+        "libutils.so",
+        "libPolarrRender.so",
+        "libc++.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libaideblur.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
+      "sha256": "d2ddc6dde5f681df699c68b57d98cc0c2b5caf47c8bd21d0ddcd5707f0d3eaba",
+      "size": 16513176,
+      "needed": [
+        "libSNPE.so",
+        "liblog.so",
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libextendfile.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
+      "sha256": "fb88e3fe8392f71a9170b3d60f035697cb654fbab746d75bcfc4b44864aa6971",
+      "size": 973696,
+      "needed": [
+        "liblog.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "odm/lib64/libmsnativefilter.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
+      "sha256": "29ec0d2bcac297564b9a69ceabd32c27cb57e1e7272d966cf07c0934af1a6dc5",
+      "size": 6214112,
+      "needed": [
+        "libz.so",
+        "liblog.so",
+        "libEGL.so",
+        "libGLESv2.so",
+        "libm.so",
+        "libdl.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/ByYo3If",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "cc6a530049d463d7c04d09f28798b2af41571d5f12b170d10dc8d804fd46c41c",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Cold.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "e09ee4b268504889aecb10b5a96e694810a0beea82519c8e51fccdabb36798c6",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/DL_A_MoneyBall.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "41c9cbe3180f5ad7bb234d5df5120b88bb4de1eba8b65e06cbb9069b5c0a73f1",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/DL_B_Inception.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "0e24353277376d430fcd56990ef6e30a50d69a22acab1caa8d5d53888702bf76",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/DL_C_R3_80.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "81d1eb0252021730bde90f45c9e39b870482da0f9fb71be6780c1f73023af76d",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/DL_D_G4.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "edace14b5490e32d330dc090d7bada4ec319b8ffe75e70de35ddeabe78eae6c8",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/DL_L_B6.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "89f2cad30f6322860eedf503ced85c1834e006505778f74d0f15758c33963ced",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Delta400.3dl.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "924f95312186247e0bcbd407893dba671cb887611752480b2ce443dd5fb9dd45",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Emerald.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "f2d0f6766382e6a0b40dcd63c0041fa2edc00236557712ab4db2e7d22e7b0333",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Martin.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "0ceda3befec79bd615a129563ebf36846c59bf5d5718b80fe7199518bf8a513f",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/OPLUSR0604.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "ec64d2d02122ea86a599d2b9427403815fdb310a902a286134e21d584ba9ffb1",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Radiance.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "5de3498eb27219b1a9913c039b0ef560b66c834aef596a561702ad9b4465f7b4",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Serenity.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "4f750931eea283334695b40d388d07295206f2ade54f1f4f47db189ae0a55244",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/Texture-70.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "11146ca6bc921888c66740752024c93ac831ec3b112e7593bdf9f3c74c16226f",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/White.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "96a1b58f35c8d6466e15795c96577ed25599668862bc7137e489c523c0605fad",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/black_gold.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "a1e9c04e2556bd6a101b4f2e9e3d7e36768becfee5dc5cf896c5e78ab053a095",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/blackandwhite.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "be078deab911d1ed4ce6d36c2192ebdf31b7a59951bc57e7d0959ca73759641f",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/bright_coloured.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "572dff031dd0b0b4683aacaee29f2e069be2b0f3d0c93d9d55c80a5daafb9650",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/cola.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "545a8136b33a2b08ccb6a80252ebfaa77a325f59b8f3719e12a9b2ae1a796ee0",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/cyberpunk-kitsch-3.1.CUBE.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "45740d41c678496a79ce565546865cc5d7dd042cef8973009dc23a715050c048",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/drjw1994.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "d2f4043081732fbec2649b3596f29033584c15d2ca03b9e8b820ac4da8def009",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/drjw2010.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "74b199cf1432acae2d418480ea666c809d6d5a7c9cec7b2b7346ce2b47bc5b13",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji-cc-high.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "48474ad275eafaf7e3e427f93ce8d1458699e608149a3a8a4d1703c39d418581",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji-cc-low.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "2601c2a7e72278efb99a1e496ba56c31027b0a650cf597450ea5e8cfb3634780",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji-eterna-v2.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "89bb4ee00ff557f27dae6d2ab11a33aa2af682205bebdb7fd6679a43a0c54847",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji-nc.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "9a7e3196e38254549330732d29e4c2bd1c6ea885307d486ae66a0de019355683",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji-proNegHi.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "7c8a9f60a1022ac7d608d80a3698119d5caa34c5030967567aea1bcee5509673",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "9e62632b73cf738b4f382bd8cc8a62297f2accb10442b97a3d188b46c04c0a78",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/fuji_cc.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "0da9d1eb332c54867b99d9979be5bb1fa8b64555baebc50c810b74e6f12ec179",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gourmet.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "7e8ac5d7c8ccd8fee8e79e21c86405a1761b87e660511b3fa14fbbdf5077f88c",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-24hour-city.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "e1a471cefc48884747a56af36258a9b62834be38de53f9323ec897e4d3770bc1",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-3dcity.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "6b343802ce4ffa17054f97b607172b7921820f689338a14ad5288a493a24f903",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-after-glow.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "f8cbe5f4577158facf59f84518a52ca7b1e21452834fb572b79e7d489c61286a",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-azure-water.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "9e8dd5f7653fbd2e0c4d9bf180f839fd218f33600317ea6c91b07749153744d1",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-beach.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "5f6f1f25c4b37d208296b17c937421fe1f9e0f7ff1dcdba6add5664ce6ea23d0",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-blue-water.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "f14fb0dade54f68334b4b2cdcbc659f213dc728741992b0f22f2ac6339ea48b8",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-coco-grove.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "ea7851a8e85fadb0249ab861740a5e2bfbe87ebad9ef34cf4f0dad941055c356",
+      "size": 786736
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-crisp-fall.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "80ace5426bae40c6f1a14aa7718288eee96f88064034473f3258507387f7b7bc",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-desert.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "22e1f0dfcaa7e2dc9667766af47e6faa86f14c4ea4ceda836d374bf8e740198b",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-glazed-tile.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "13317c7dcab8b116c3a18435994d8a51b2edab367ce2990421524152847bbf72",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-mountainous.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "f2103182d16435bf48222b9585c46d2f86788cfa4001dbd4262368d99261df38",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-old-times.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "251750eb7f46420b13c3170a1d0874cb6773efb3844ec850b2e2b879125cc715",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-quietly-ele.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "0ab9ef00c63b9bff1b95f173a9c33edb349d5fe70dda0e920a693c9f4cb62de2",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/gt-steaming.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "99f1d07bfa0fcc5e65997e9b5473ecd104f4099ca3e9a32eef73c93ad1eeb5a2",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/interstellar_space.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "5ba45b04018c2b3d30f7500181816d789199f66768645c6b85bce4de098de127",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/jw_sun.CUBE.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "3b32284cc53a6557d8f86edcb81a9ea751bbe7aceac4ec4f2646f97c555c9d8a",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/jw_surprise.CUBE.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "a300ad84b824e069205688eb6b2b65ccae1ef5bb86e35182911fc8ef638788fa",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/jzk-movie.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "fa0442a5bc30b92b02fec38e6e06e312f3a99945da42bc06217679722586f587",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/kodak.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "b3a820706672d34149eeff6572463ba8d17ba5a7e28b8b569d716bd0a6a1e6e9",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/meicam.child.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "e8e925efb803127ef3ebf11593287cd52421232b7619cbad11fefb4e81088e2f",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/mono.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "e7c5596463b8789fd8b6278f794812eb6c1aad37d30940f80990b60a61271c0e",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/morandi.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "6eb135bfe1e90d0509ba571ca46325acd97ca70eb5f90be4ce5b711a7144cfb5",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/natural.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "a2016a88d00206b6ded02d50ee5b73c275f0e910b69467880c6ef88d07f57581",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/neon-2020.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "5bb4aaaf127ea329fcc8fdf85a1b9d054525e4b1fb68a3c2ef0022e0ad407eb3",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/oplus-black-gold.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "497f350b2fbba71c2218168879a9b8b4bdec7f59ed20249f88555e031ec75a62",
+      "size": 12400
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/oplus-cyberpunk.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "c32d857a629494a7de3c97c41709c9f6f9a5f8e2d9b317081fc965eef40614d5",
+      "size": 12400
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/oplus-nightcity.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "81bf94616cd2669e7eb9ca16d48badd97793fefe72a094302a9899e905dc3c05",
+      "size": 12400
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/oplus-yellow-blue.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "3e03639766d160367305a5cf83b3c822dad18b7f627d6ac956b1804f7e2ae589",
+      "size": 12400
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/p4_1.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "8f4e4d8f7c47450f2045edb1b04a7ad6f886e59388b36f5d350169a14f17ef9f",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/p4_3.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "02f51e81ffa841eab6c51f16e54b19eec8ae210483761dfbfce64b7e0f8a0ee0",
+      "size": 12400
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/rJ5g5vPWG",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "8237b68d00a69ba111e1fa74703ab25c319dde375b48c91ccec1e962d5e207ef",
+      "size": 14855
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/red-red.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "8d097778624695b03ddef2de3134138e3d6672d73cd393d55f964c33ecfc2627",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/sky-blue.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "228f1e09b73cff2234196aa20ae83bd5c6e3b9ca0133e851bc62317b2efcfff2",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/tone-of-light.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "484000120aee834ee06b11dfdee05a350d1ad99f9bc837745e4287ac2f4da396",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/tree-green.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "834879525e05dadaa41ecbbf406d5b9acad618e0a69defb7f3e89e146210a349",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/vivid-cool.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "282a725fa4a765b4bb38cf01d80fcbf943b8db117e7c0e326c58a6a1f3bb3321",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/vivid-lut.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "9b3c4b03bd573bd85ec24897f51e75ad11eeffc78e0f7e4b116809f4d1c9be57",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/meishe_lut/vivid-warm.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "6e8e9dcc1858eac5e4754e2101317a47ce773ada8a9969e3e8f2ebec2079126c",
+      "size": 98480
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-beach.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "ac71da7d1875d020d4f07383ab09aa6e6de4410898b53f844d8c91be96ef9a44",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-earth.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "289ecb0ba2fc35a3f2771eb3e942b9ed8f6b0ea20ae5c264ce61c3b564df74bd",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-glazed-tile.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "c06649a93777db81c962bb1dbc283cdadbe9ff0262a4451c5a20d9c308b792fe",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-japan.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "7bf04ea7d6241240c0b2e8ed3bd7caa32992a24e6d9f136aa9d0859c199c0c3e",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-lake.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "1fb07c63474246b50ba94e443d323802eac65e238be78b1f11d8429e4aad0c17",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/filters_lut/gt-rosy.cube.rgb.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "b74d8fa4adeb6b566ee041a369369e70bedf4785ba9a9ef643aa545576a85da1",
+      "size": 131072
+    },
+    {
+      "path": "odm/etc/camera/selfbokehmodel.bin",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "794c494d912a96b2c0dc6ae05d1afe0ccdb9cfc84dd62178f47d9c209f540bb8",
+      "size": 23101372
+    },
+    {
+      "path": "odm/etc/camera/selfbokehParam.json",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "data",
+      "install": "add",
+      "sha256": "8f23613ebf3d96960fd1eae9ad00f4baa80aa7ce3172fb38767660125bd50fc8",
+      "size": 3847
+    },
+    {
+      "path": "odm/etc/camera/config/camera_unit_feature_config.protobuf",
+      "source": "vendor",
+      "device": "lemonade",
+      "group": "fix",
+      "kind": "binary-config",
+      "install": "replace",
+      "sha256": "22092fd5d1f1410e80cbc4cee83e32340ae53b24cc798f1ea47435cc36ab09c9",
+      "size": 40574,
+      "replace_sha256": [
+        "11119ecf589e8c7c5b928c6a93e77ec69864c9a2644dd055ca1ffd8daafb747a",
+        "8bd91ae1afdcae05c09bbc209799a30585749c030731f0ad5eefc546b0c6c456"
+      ]
+    },
+    {
+      "path": "odm/etc/camera/config/camera_unit_feature_config.protobuf",
+      "source": "vendor_pro",
+      "device": "lemonadep",
+      "group": "fix",
+      "kind": "binary-config",
+      "install": "replace",
+      "sha256": "b453f725f58973b821f05fa45d3ec1ec2a7bad0e85fac27434fa8289ed47b0ef",
+      "size": 40557,
+      "replace_sha256": [
+        "11119ecf589e8c7c5b928c6a93e77ec69864c9a2644dd055ca1ffd8daafb747a",
+        "217d72e1456ec6f759f1e8d8ddd6d5b8824b157b1b9e8f7f23fecdd11585becb",
+        "22092fd5d1f1410e80cbc4cee83e32340ae53b24cc798f1ea47435cc36ab09c9",
+        "71c9edd09325d545cc0d461b8a69d3d9338ac5fd38f705036beabb3f71e420f9",
+        "8bd91ae1afdcae05c09bbc209799a30585749c030731f0ad5eefc546b0c6c456"
+      ]
+    },
+    {
+      "path": "odm/lib/rfsa/adsp/libarcsoft_hdrplus_hvx_skel_lemonade.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "adsp",
+      "install": "replace",
+      "sha256": "2454a98fa11e1ebc041d377e683a3c6152e96c77a364eae854c244410ede10eb",
+      "size": 517368,
+      "replace_sha256": [
+        "0a74fc6e35f14faf1c7d226c12b1be10a918a7e5698d551778d7b4aa49e03726"
+      ]
+    },
+    {
+      "path": "odm/lib/rfsa/adsp/libarcsoft_portraitsn_hvx_skel_20031.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "adsp",
+      "install": "replace",
+      "sha256": "8495cb01b1cff399b3d32eed972b6089cf1c0fc96980cab9ebdc30a6ec1579de",
+      "size": 512152,
+      "replace_sha256": [
+        "daa283f932ed2cbba4183ad959137c542ef728c34879b20ffe3d09ed8e7c2625"
+      ]
+    },
+    {
+      "path": "odm/lib64/lib2DSlender.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
+      "sha256": "8219b2475c9cce095f550d99b30f3ec767be339ca1c3f0038096a131dd55bc02",
+      "size": 8058944,
+      "needed": [
+        "liblog.so",
+        "libGLESv3.so",
+        "libEGL.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ]
     },
     {
       "path": "odm/lib64/libAncFilter.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "137d5221d2a28cfd9d3f08c1183067bfd1b37c8d43cb96daae612a2ebc8e77a7",
       "size": 1186112,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libEGL.so",
@@ -73,14 +1795,16 @@
         "libm.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncHumBokeh.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "beceaeff4234118f6a415308caf3cdb23e7e9121eb18415414332d6bfd6e792c",
       "size": 2910576,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libEGL.so",
@@ -89,14 +1813,16 @@
         "libz.so",
         "libm.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncHumBokehPost.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "71e1cd53895b39f4f85e92af7b3fcd4a126afa70fe5cd12da5bf3708705e4070",
       "size": 2910576,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libEGL.so",
@@ -105,14 +1831,16 @@
         "libz.so",
         "libm.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncHumVideoBase.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "b8478bf02158143fce84bb1a48d09c8bd7bf75a939480c0bde6292e896376c82",
       "size": 67592,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libEGL.so",
@@ -122,65 +1850,75 @@
         "libnativewindow.so",
         "libm.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncHumanDoubleExposure.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "27c5fe751c1a9dd0b53db54559bb5233c46e46f0f1aaa0ee18b8d3cafa1b60dd",
       "size": 5760,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libm.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncHumanSegFigureFusion.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "239dd3fc9627dcd37214b4b091d21518e2623ec51e69b588a0d086215ca1fd40",
       "size": 5952,
-      "kind": "library",
       "needed": [
         "libm.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libAncSegBaseSdk.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "79bb398c9fef765a2ae1d9fac732f0cd974bac0fd009f69317ff66e6383a88d5",
       "size": 4618136,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libdl.so",
         "libz.so",
         "libm.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libBokehPre.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "d307433f907cb6ac31c38a8b2bbb2cc9a03cc1aa8abb71d90ce297b23b599dc1",
       "size": 5848,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libCaptureBokeh.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "3f797237672f1933ba22e1860baa970550d7fda5019dd026af05d21a843db291",
       "size": 1270312,
-      "kind": "library",
       "needed": [
         "libc++_shared.so",
         "liblog.so",
@@ -188,14 +1926,16 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libEIS.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "replace",
       "sha256": "db7a86b20b771486d51227f32fd43c183d69ce063f935ebd813d50397118be9a",
       "size": 337353,
-      "kind": "library",
       "needed": [
         "libOGLManager.so",
         "libDeVIS.so",
@@ -209,16 +1949,18 @@
         "libdl.so",
         "libc.so"
       ],
-      "install": "replace",
       "replace_sha256": [
         "549644f186da6c5a8c32262543ffdc96a9bb756c73281d9952360e78d6bf182e"
       ]
     },
     {
       "path": "odm/lib64/libFDClite.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "67d5767c7d47803f0dd54c58fadd0f6b024ecf9f95379f78fe4355e33a4c0be1",
       "size": 9930672,
-      "kind": "library",
       "needed": [
         "libstfd_mobile_api.so",
         "libAncSegmentSdk.so",
@@ -228,14 +1970,16 @@
         "libdl.so",
         "libm.so",
         "liblog.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libFaceBeautyJni.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "5f3e59dd001bb7971fc916806808dba5f4d26a92873b23743579e55cd25ef8aa",
       "size": 516168,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libEGL.so",
@@ -244,14 +1988,16 @@
         "libdl.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libPerfectColor.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "96d849ec7c2689907583f29d6efab2ad186c23f0f8443465e1d5326dd058ced0",
       "size": 579912,
-      "kind": "library",
       "needed": [
         "libOpenCL.so",
         "liblog.so",
@@ -260,28 +2006,32 @@
         "libdl.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libRedeyeReduce.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "8b40f06eb11b86917c09243eb687e6ec846c690f526102e75f8fa2b87d865433",
       "size": 1170776,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libGLESv2.so",
         "libEGL.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libSuperRaw.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "b06738d763bc5054ce1a6d66bade54802bcc02c9b2f5e4cd5c4ef63fa49dabbb",
       "size": 417985,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libdl.so",
@@ -290,14 +2040,16 @@
         "libcdsprpc.so",
         "libm.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libSuperTextWrapper.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "076006bc9deafc3c81f4ce1ed16bd71a11e64c9857d15ba051f88060b22cadf4",
       "size": 891984,
-      "kind": "library",
       "needed": [
         "libXDocProcessSDK.so",
         "libYTCommon.so",
@@ -307,28 +2059,32 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libTrafficMode.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "44bd7b13c15d3a00f35a968ee86ee48d54c53fc354697d719d52959cb34d241b",
       "size": 67584,
-      "kind": "library",
       "needed": [
         "libc++_shared.so",
         "liblog.so",
         "libdl.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libXDocProcessSDK.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7e8bddf7457b7186a86f567822720cafaecdf1812da755001c07123fb825efef",
       "size": 6966904,
-      "kind": "library",
       "needed": [
         "libdl.so",
         "liblog.so",
@@ -338,14 +2094,16 @@
         "libc.so",
         "libz.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libYTCommon.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "70985ff89f801e3c68322be1b376b704b14e1b620882a08e888c5511ebea1d38",
       "size": 857313,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libz.so",
@@ -353,14 +2111,16 @@
         "libstdc++_vendor.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libaisd.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "5869c8360b6e0bbd59dd729100705fddbd96c78dfe4a9cc843a3760ab8efb196",
       "size": 12068800,
-      "kind": "library",
       "needed": [
         "libSNPE.so",
         "libc++_shared.so",
@@ -368,26 +2128,30 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libaiseg.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "907d6436fb935430e9f9a1de6583eb970e57c57bdd26f4d5aebf243feabff999",
       "size": 5848,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libc.so",
         "libm.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libalCFR.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "2bd2f508619a547799b6ade45d1ef4d0d9d518f77b79ad177daadb67df496145",
       "size": 321744,
-      "kind": "library",
       "needed": [
         "libOpenCL.so",
         "libc++_shared.so",
@@ -395,70 +2159,80 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libancbase_rt_bokeh.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "4eaaadc54e3d08b9c21b1d0d068de783ebf01dd64accf8a9001e194cb1fd559b",
       "size": 13495360,
-      "kind": "library",
       "needed": [
         "libm.so",
         "liblog.so",
         "libz.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libancbase_segbase.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "0904bf939baf5be42f7e0d31ea2e89422202162b5e9cf69afb49c1ec376cabcc",
       "size": 23396976,
-      "kind": "library",
       "needed": [
         "libm.so",
         "liblog.so",
         "libz.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libapspng.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "9aae4ed339614f2ea842b7e4e6ff60e2cf2d5675258a52c3671113dc36dfe415",
       "size": 230688,
-      "kind": "library",
       "needed": [
         "libz.so",
         "libc++.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libapsyuv.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "f246517076ff811144e8fa74a892b8be7c6acd1d30cccef272d96144b9365f13",
       "size": 368984,
-      "kind": "library",
       "needed": [
         "libapsjpeg.so",
         "libc++.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libarcsoft_long_exposure_capture.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "1952cca5640f4ad54f575845ccf83cce347cbbdb64e7f80b5ca0339b600e9dff",
       "size": 10753633,
-      "kind": "library",
       "needed": [
         "libcdsprpc.so",
         "libmpbase.so",
@@ -466,28 +2240,32 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libarcsoft_long_exposure_preview.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7f5097987e12cb6a068f4c9148b461ddad737e7734fc2ac409eaa00597f32f7f",
       "size": 10424145,
-      "kind": "library",
       "needed": [
         "libmpbase.so",
         "liblog.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libeffect_custom.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7896e7ace8735514be0077b62dfd732807097af8a66ac4ff59e685ee8e929c05",
       "size": 1920608,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libz.so",
@@ -495,28 +2273,32 @@
         "libm.so",
         "libc++_shared.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libimgClarityEvaluate.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7839ae9d64fea97c44e2e22b64f5074f27dac4e29a8cb1c95070426c8f9c2990",
       "size": 12344832,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libm.so",
         "libc++_shared.so",
         "libdl.so",
         "libc.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libnightvision.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add-or-replace",
       "sha256": "190b4ec6df291b09e14b153ba97f1c4ea960de3cefc4e898e3c2585dde95b682",
       "size": 7413545,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libcdsprpc.so",
@@ -525,44 +2307,50 @@
         "libdl.so",
         "libc.so"
       ],
-      "install": "add-or-replace",
       "replace_sha256": [
         "880efd3a366c4b81d4e8f0ecc4b711f91feaef8d4a59e98b4affaa05492b6a31"
       ]
     },
     {
       "path": "odm/lib64/libnpu.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "2dbbb8eda04d3b3d412cf5b0562b2f93d6b94f2cde516630d38f4dd2ec0ace8d",
       "size": 3612320,
-      "kind": "library",
       "needed": [
         "liblog.so",
         "libcdsprpc.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libpngwrapper.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "fe7758308e53ce7d96ed86df5215b8ce74c94e98fcdde3930b20b167a8a99e48",
       "size": 11136,
-      "kind": "library",
       "needed": [
         "libapspng.so",
         "libc++.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libui-oplus.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "efcf187d59b4d57129a1dd0a3aa34da52ee6912617fc8c29fad4f8364a01a7c9",
       "size": 532201,
-      "kind": "library",
       "needed": [
         "android.hardware.graphics.allocator@2.0.so",
         "android.hardware.graphics.allocator@3.0.so",
@@ -584,28 +2372,32 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "odm/lib64/libyuvwrapper.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7d085e2ee3b953b71369fd72a0b2c96b71aa8f8429c77532caede28a5268be90",
       "size": 11040,
-      "kind": "library",
       "needed": [
         "libapsyuv.so",
         "libc++.so",
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     },
     {
       "path": "vendor/lib/libcamxexternalformatutils.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "add",
       "sha256": "7cbcb37fc09c9a4946f2f3bf585d81033981d6ea7af4a721bd0ebd83825bef71",
       "size": 14544,
-      "kind": "library",
       "needed": [
         "libcutils.so",
         "liblog.so",
@@ -615,8 +2407,7 @@
         "libc.so",
         "libm.so",
         "libdl.so"
-      ],
-      "install": "add"
+      ]
     }
   ]
 }

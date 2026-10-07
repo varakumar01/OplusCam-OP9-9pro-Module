@@ -29,19 +29,18 @@ EIS_LIBRARIES = {
     # Do not include it in normal collections before recording is validated.
     "/vendor/lib64/libui.so",
 }
-# These have separate, pinned donor preparation/provenance in the builder.
-# Once the module is mounted, they also appear under /odm; collecting them
-# again would incorrectly describe donor or patched binaries as firmware.
+# The module ships its own builds of these. Once it is mounted they appear
+# under /odm; collecting them again would describe them as firmware.
 DONOR_LIBRARIES = {
-    "/odm/lib64/lib2DSlender.so",
-    "/odm/lib64/libAncHumBokeh.so",
-    "/odm/lib64/libFilterWrapper.so",
-    "/odm/lib64/libancbase_rt_bokeh.so",
+    "/" + entry["path"]
+    for entry in json.loads((ROOT / "aox/manifest.json").read_text())["files"]
+    if entry["path"].startswith(("odm/", "vendor/"))
 }
 
 
 def collect(include_eis=False):
-    rules = ROOT / ".cache/donor/op9/sepolicy/vendor/file_contexts"
+    # Fetched by prepare_aox.py from the camera tree.
+    rules = ROOT / ".cache/aox/inputs/file_contexts"
     patterns = [re.compile(line.split()[0]) for line in rules.read_text().splitlines()
                 if line.strip() and not line.startswith("#") and "same_process_hal_file" in line]
     result = root("find /odm/lib64 /vendor/lib64 -type f -name '*.so'")
