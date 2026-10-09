@@ -97,3 +97,8 @@ allow priv_app vendor_oplus_camera_process_file dir { create read write open get
 allow priv_app vendor_oplus_camera_process_file file { create read write open getattr setattr append unlink rename ioctl lock map }
 allow priv_app_36 vendor_oplus_camera_process_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
 allow priv_app_36 vendor_oplus_camera_process_file file { create read write open getattr setattr append unlink rename ioctl lock map }
+
+# /proc/OIS_FW_DOWNLOAD_STATE keeps the proc label: KernelSU does not load
+# the genfscon line above. This lets the camera provider read every file
+# labelled proc, which is wider than the aox label.
+allow hal_camera_default proc file { read open getattr }
