@@ -358,21 +358,6 @@ class Installer(unittest.TestCase):
                                      str(SCRIPT), a, b])
             self.assertEqual(result.returncode, expected, (a, b))
 
-    def test_cameraserver_only_for_its_build_and_a_rom_without_the_tag(self):
-        staged_bin = self.modpath / "aox/cameraserver"
-        for build, rom, ours, kept in (("B1", b"plain", False, True), ("B2", b"plain", False, False),
-                                       ("B1", b"x com.oplus.packageName x", False, False),
-                                       ("B1", b"x com.oplus.packageName x", True, True)):
-            staged_bin.write_bytes(b"server")
-            (self.modpath / "aox/cameraserver-build.txt").write_text("B1\n")
-            self.device_file("system/bin/cameraserver", rom)
-            old = self.tmp / "old-module/aox/cameraserver"
-            if ours:
-                old.parent.mkdir(parents=True, exist_ok=True)
-                old.write_bytes(b"server")
-            self.install(AOX_BUILD_ID=build)
-            self.assertEqual(staged_bin.exists(), kept, (build, rom, ours))
-
     def test_unused_adsp_overlay_is_removed(self):
         self.device_file("odm/lib/rfsa/adsp/libarcsoft_hdrplus_hvx_skel_lemonade.so", b"other skel")
         self.stage_libraries([

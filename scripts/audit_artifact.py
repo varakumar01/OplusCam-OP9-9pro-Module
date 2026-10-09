@@ -19,7 +19,6 @@ CONTROL_FILES = {
     "gralloc-source.json", "gralloc32-source.json",
     "aox.sh", "sepolicy.rule", "aox-source.json",
     "aox/edits.txt", "aox/files.txt", "aox/app.txt", "aox/app-version.txt", "aox/fwk-markers.txt",
-    "aox/cameraserver", "aox/cameraserver-build.txt",
 }
 PRIVATE_KEY = re.compile(
     rb"-----BEGIN (?:RSA |EC |ENCRYPTED )?PRIVATE KEY-----\s+"

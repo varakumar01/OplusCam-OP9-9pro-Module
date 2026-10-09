@@ -82,24 +82,11 @@ These need a ROM built from the aox trees:
   `same_process_hal_file` label on the ROM's own camera libraries; the rules
   above stand in for both.
 
-## cameraserver
-
-The camera HAL runs its OnePlus pipelines only when the camera service sends
-it the client package name in the `com.oplus.packageName` session tag (soong
-config `camera.package_name`, set by the aox trees). An app cannot set that
-tag. On a ROM whose `cameraserver` was built without it, Night, Long exposure,
-XPan and Dual-view video fail.
-
-The module carries the `cameraserver` of an AxionOS 2.8 build. The installer
-keeps it only when `ro.build.id` is the build it was made for
-(`BP4A.251205.006`) and the ROM's own binary does not contain the tag name;
-`post-fs-data.sh` then binds it over `/system/bin/cameraserver` from a tmpfs.
-On any other Android build it is dropped and those modes stay unavailable.
-
 ## Known faults of 4.040.557 on these phones
 
-Slo-mo stops the camera provider (`CamX::ImageBuffer::Import`) on crDroid
-12.12, and the app then reopens in Slo-mo. Not solved.
+Night, Long exposure, XPan and Dual-view video need a ROM whose camera
+service sends the camera HAL the client package name (`camera.package_name`
+soong config). crDroid 12.12 does not.
 
 ## Build
 
