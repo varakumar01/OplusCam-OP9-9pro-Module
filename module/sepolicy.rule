@@ -84,3 +84,16 @@ allow priv_app_36 vendor_hal_qspmhal_default fd use
 allow priv_app_36 vendor_mpctl_prop file { read open getattr map }
 allow priv_app_36 vendor_persist_camera_file dir { read open getattr search }
 allow priv_app_36 vendor_persist_camera_file file { read open getattr map }
+
+# /data/vendor/camera_process: the APS job and Live Photo store, written by
+# the app (per-user MLS level) and the camera provider. post-fs-data.sh
+# labels the directory.
+type vendor_oplus_camera_process_file file_type
+typeattribute vendor_oplus_camera_process_file data_file_type
+typeattribute vendor_oplus_camera_process_file mlstrustedobject
+allow hal_camera_default vendor_oplus_camera_process_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
+allow hal_camera_default vendor_oplus_camera_process_file file { create read write open getattr setattr append unlink rename ioctl lock map }
+allow priv_app vendor_oplus_camera_process_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
+allow priv_app vendor_oplus_camera_process_file file { create read write open getattr setattr append unlink rename ioctl lock map }
+allow priv_app_36 vendor_oplus_camera_process_file dir { create read write open getattr setattr search add_name remove_name rmdir rename ioctl lock }
+allow priv_app_36 vendor_oplus_camera_process_file file { create read write open getattr setattr append unlink rename ioctl lock map }

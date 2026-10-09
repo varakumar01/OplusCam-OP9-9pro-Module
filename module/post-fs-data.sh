@@ -12,9 +12,13 @@ fi
 # /odm/etc/init/init.camera_process.rc, which init reads before modules mount.
 for dir in /data/vendor/camera_process /data/vendor/camera_process/livephoto; do
     [ -d "$dir" ] && continue
-    mkdir "$dir" && chown camera:camera "$dir" && chmod 0777 "$dir" &&
-        chcon --reference=/data/vendor/camera "$dir"
+    mkdir "$dir" && chown camera:camera "$dir" && chmod 0777 "$dir"
 done
+# A ROM without the aox policy leaves the store as vendor_data_file, which
+# the app may not write. Use the type sepolicy.rule declares, else the camera
+# data label.
+chcon -R u:object_r:vendor_oplus_camera_process_file:s0 /data/vendor/camera_process 2>/dev/null ||
+    chcon -R --reference=/data/vendor/camera /data/vendor/camera_process
 RESETPROP=/data/adb/ksu/bin/resetprop
 [ -x "$RESETPROP" ] || RESETPROP=/data/adb/ksud
 append_camera() {
