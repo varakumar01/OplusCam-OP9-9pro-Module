@@ -112,3 +112,13 @@ allow priv_app hal_camera_default fd use
 allow hal_camera_default priv_app_36 binder { call transfer }
 allow hal_camera_default priv_app_36 fd use
 allow priv_app_36 hal_camera_default fd use
+
+# libadsprpc in the app reads the DSP shell and its libraries from
+# /vendor/dsp/cdsp (adsprpcd_file on a ROM without the aox labels) and
+# watches the directory.
+allow priv_app adsprpcd_file file { read open getattr map }
+allow priv_app adsprpcd_file dir watch
+allow priv_app mnt_vendor_file dir search
+allow priv_app_36 adsprpcd_file file { read open getattr map }
+allow priv_app_36 adsprpcd_file dir watch
+allow priv_app_36 mnt_vendor_file dir search
