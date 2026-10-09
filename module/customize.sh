@@ -54,6 +54,11 @@ if [ -f "$MODPATH/gralloc32-source.json" ]; then
     esac
     ui_print "Matching ARMv7 graphics trial for media services."
 fi
+# A running copy of this module with another camera version overlays its own
+# edited configuration files; this install would start from those.
+CAMERA_RUNNING=$(cat /data/adb/modules/ooscamera_op9/aox/app-version.txt 2>/dev/null)
+[ -z "$CAMERA_RUNNING" ] || [ "$CAMERA_RUNNING" = "$(cat "$MODPATH/aox/app-version.txt" 2>/dev/null)" ] ||
+    abort "Oplus Camera $CAMERA_RUNNING module is installed: remove it and reboot, then install this one."
 ui_print "Installing Oplus Camera $(cat "$MODPATH/aox/app-version.txt" 2>/dev/null) for the OnePlus 9 / 9 Pro."
 ui_print "Module version $(sed -n 's/^version=//p' "$MODPATH/module.prop")."
 ui_print "Standalone mounting: Mountify is not required."
