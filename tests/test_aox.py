@@ -80,7 +80,12 @@ class Installer(unittest.TestCase):
         for path in CONFIGS:
             result = staged(self.modpath, path).read_bytes()
             head = (FIXTURES / "head" / path).read_bytes()
-            if path.endswith(("oplus_camera_config", "oplus_camera_aps_config")):
+            if path.endswith("oplus_camera_aps_config"):
+                # Not strict JSON; the one new tag is appended.
+                self.assertIn(b'"com.oplus.aps.support.hw_jpeg"', result)
+                self.assertIn(b'"com.oplus.aps.support.hw_jpeg"', head)
+                continue
+            if path.endswith("oplus_camera_config"):
                 # New tags are appended rather than inserted mid-file.
                 tags = lambda data: {e["VendorTag"]: e for e in json.loads(data)}
                 self.assertEqual(tags(result), tags(head), path)
@@ -101,7 +106,9 @@ class Installer(unittest.TestCase):
             target = staged(self.modpath, path)
             # Untouched files are not staged: the device copy already is head.
             result = target.read_bytes() if target.exists() else (self.root / path).read_bytes()
-            if path.endswith(("oplus_camera_config", "oplus_camera_aps_config")):
+            if path.endswith("oplus_camera_aps_config"):
+                self.assertIn(b'"com.oplus.aps.support.hw_jpeg"', result)
+            elif path.endswith("oplus_camera_config"):
                 self.assertEqual(tags(result), tags(head), path)
             else:
                 # The Pro tree's jni.version line ends in LF inside a CRLF file.
@@ -125,7 +132,7 @@ class Installer(unittest.TestCase):
         self.fixtures()
         self.install()
         edited = [p for p in CONFIGS if staged(self.modpath, p).exists()]
-        self.assertEqual(len(edited), len(CONFIGS) - 1)  # all but the aps config
+        self.assertEqual(len(edited), len(CONFIGS))
         first = {p: staged(self.modpath, p).read_bytes() for p in edited}
         log = self.install()
         self.assertNotIn("apply odm", log)
@@ -164,7 +171,7 @@ class Installer(unittest.TestCase):
         self.assertIn("closeSlaveThresholdTime = 1", result)
         # The 120fps group needs both blocks; neither is applied alone.
         self.assertIn("skip  odm/etc/camera/config/camera_unit_config", log)
-        self.assertNotIn(b"video_120fps", staged(self.modpath, unit).read_bytes())
+        self.assertFalse(staged(self.modpath, unit).exists())
 
     def test_module_copy_is_edited_and_its_own_values_kept(self):
         self.fixtures()

@@ -83,7 +83,13 @@ def check_apk_alignment(path):
 
 def sign_apk(source, target, keys, apksigner):
     """Sign with the public AOSP platform test key (v2/v3 only, so no ZIP
-    entry moves and the alignment checked above is kept)."""
+    entry moves and the alignment is kept). An APK whose stored libraries are
+    not page aligned, as the 4.x one is in its tree, is aligned first, the way
+    a ROM build does for a prebuilt app."""
+    aligned = target.with_name(target.name + ".aligned")
+    tool = shutil.which("zipalign") or str(pathlib.Path(shutil.which(apksigner) or apksigner).with_name("zipalign"))
+    subprocess.run([tool, "-p", "-f", "4", str(source), str(aligned)], check=True)
+    source = aligned
     check_apk_alignment(source)
     subprocess.run([apksigner, "sign", "--key", str(keys / "platform.pk8"),
                     "--cert", str(keys / "platform.x509.pem"), "--min-sdk-version", "30",
@@ -91,6 +97,7 @@ def sign_apk(source, target, keys, apksigner):
                     "--v3-signing-enabled", "true", "--out", str(target), str(source)], check=True)
     idsig = target.with_name(target.name + ".idsig")
     idsig.unlink(missing_ok=True)
+    aligned.unlink()
     subprocess.run([apksigner, "verify", "--min-sdk-version", "30", str(target)], check=True)
     check_apk_alignment(target)
 
