@@ -47,6 +47,26 @@ the first boot is slower, and another app on that ROM that relies on a class
 only its own `oplus-fwk` had would break. If that boot does not complete,
 the module disables itself on the next one.
 
+## The client package name
+
+The camera HAL runs its OnePlus pipelines (Night, Long exposure, XPan,
+Dual-view video) only when the session parameters carry the vendor tag
+`com.oplus.packageName`. A ROM built from the aox trees has `cameraserver`
+add it (soong config `camera.package_name`); on any other ROM the HAL sees an
+empty name and those modes fail. An app cannot simply set the tag:
+`cameraserver` drops session parameters the HAL does not list in
+`android.request.availableSessionKeys`.
+
+The module changes two files at build time so the camera supplies the tag
+itself, on any Android version:
+
+- `/vendor/lib64/hw/camera.qcom.so`: the session key list entry for the
+  factory tag `engineercamera.agingtest.mode.select` points at `packageName`
+  instead (`scripts/patch_hal.py`, two instructions in two places). It
+  replaces only the stock library it was made from.
+- `com.oplus.camera.unit.sdk.jar`: `Camera2Impl.createNewSession()` sets the
+  tag to `com.oplus.camera` on the session request (`scripts/patch_sdk.py`).
+
 ## Fixes
 
 Every change is conditional and logged to
