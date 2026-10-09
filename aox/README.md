@@ -31,7 +31,16 @@ The module's APK is signed with the public AOSP platform test key. On a
 test-keys ROM that makes it platform-signed, as it is in an aox build.
 
 OplusCamera 4.x runs on the stock `/odm` libraries, so nothing is paired with
-the app, and it uses the ROM's own `oplus-fwk.jar`.
+the app.
+
+## oplus-fwk
+
+4.x calls `OplusUIFirstManager.setUxThreadValue`, which the `oplus-fwk.jar` of
+a ROM without the aox trees lacks; the app then stops at launch. The installer
+looks for three aox classes in the ROM's `/system/framework/oplus-fwk.jar` and
+overlays the module's jar when one is missing. This replaces a boot jar: the
+first boot is slower, and if that boot does not complete the module disables
+itself on the next one.
 
 ## Fixes
 

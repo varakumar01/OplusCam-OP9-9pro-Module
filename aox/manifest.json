@@ -42,7 +42,11 @@
       "base": "43e90b9ee7a54f9fc782f49ea9c6e7855790115d"
     }
   },
-  "fwk_markers": [],
+  "fwk_markers": [
+    "Lcom/oplus/wrapper/hardware/camera2/CaptureResult;",
+    "Lcom/oplus/view/ViewRootManager;",
+    "Lcom/oplus/app/IOplusProtectConnection;"
+  ],
   "inputs": [
     {
       "name": "privapp-permissions-oplus.xml",
@@ -55,6 +59,12 @@
       "source": "camera",
       "src": "sepolicy/vendor/file_contexts",
       "sha256": "fe1ef46510a6f6724ae7a4a446c8c0efc8e0cce54592f9fc15c39e4c137fd1a5"
+    },
+    {
+      "name": "oplus-fwk.jar",
+      "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19-r2.jar",
+      "sha256": "c1339fd1d0ffdfed2fb9766747dc677a141b5c0af8386d38f49402baffd59a0b",
+      "note": "oplus-fwk built from the hardware source revision plus fwk/ with javac and D8"
     }
   ],
   "files": [
