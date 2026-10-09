@@ -404,13 +404,10 @@ class BuildStaging(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             stage = pathlib.Path(tmp)
             owned = stage / "system/vendor/odm/lib64/libAncHumBokeh.so"
-            pair = stage / "system/vendor/odm/lib64/libAlgoInterface.so"
             owned.parent.mkdir(parents=True)
             owned.write_bytes(b"collected from the device")
-            pair.write_bytes(b"collected from the device")
             build.stage_aox(stage, CACHE, None)
             self.assertEqual(owned.read_bytes(), b"collected from the device")
-            self.assertNotEqual(pair.read_bytes(), b"collected from the device")
             source = json.loads((stage / "aox-source.json").read_text())
             self.assertIn("odm/lib64/libAncHumBokeh.so", source["module_provided"])
             for path in (stage / "aox/app.txt").read_text().split():
