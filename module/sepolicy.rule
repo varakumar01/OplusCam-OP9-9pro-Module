@@ -102,3 +102,13 @@ allow priv_app_36 vendor_oplus_camera_process_file file { create read write open
 # the genfscon line above. This lets the camera provider read every file
 # labelled proc, which is wider than the aox label.
 allow hal_camera_default proc file { read open getattr }
+
+# The post-processing service in the camera provider hands the app a session
+# object and calls it back. Without this a 5x photo aborts the app:
+# "Attempted to retrieve value from failed HIDL call ... FAILED_TRANSACTION".
+allow hal_camera_default priv_app binder { call transfer }
+allow hal_camera_default priv_app fd use
+allow priv_app hal_camera_default fd use
+allow hal_camera_default priv_app_36 binder { call transfer }
+allow hal_camera_default priv_app_36 fd use
+allow priv_app_36 hal_camera_default fd use
