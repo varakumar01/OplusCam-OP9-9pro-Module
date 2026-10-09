@@ -644,6 +644,31 @@ aox_decide_framework() {
     fi
 }
 
+# The camera HAL runs its OnePlus pipelines (Night, Long exposure, XPan,
+# Dual-view video) only when cameraserver sends it the client package name in
+# the com.oplus.packageName session tag. An app cannot set that tag. Keep the
+# staged cameraserver only on the Android build it was built for, and only
+# when the ROM's own does not set the tag; post-fs-data.sh binds it.
+aox_decide_cameraserver() {
+    bin="$MODPATH/$AOX_DIR/cameraserver"
+    [ -f "$bin" ] || return 0
+    want=$(cat "$MODPATH/$AOX_DIR/cameraserver-build.txt" 2>/dev/null)
+    have=${AOX_BUILD_ID-$(getprop ro.build.id 2>/dev/null)}
+    if [ -f "$AOX_OLD_MODULE/$AOX_DIR/cameraserver" ]; then
+        aox_log "srv   cameraserver is this module's: providing it again"
+    elif [ -z "$want" ] || [ "$have" != "$want" ]; then
+        rm -f "$bin"
+        aox_log "skip  cameraserver: built for $want, this ROM is ${have:-unknown}"
+    elif grep -qF com.oplus.packageName "$AOX_ROOT/system/bin/cameraserver" 2>/dev/null; then
+        rm -f "$bin"
+        aox_log "srv   the ROM's cameraserver sends the client package name"
+    else
+        aox_log "add   cameraserver: the ROM's does not send the client package name"
+        ui_print "This ROM's camera service does not name the camera to the HAL;"
+        ui_print "the module replaces it so Night and the other OnePlus modes work."
+    fi
+}
+
 # With this module's app in use, its paired libraries must be in place.
 aox_check_pairs() {
     [ "$AOX_APP" = rom ] && return 0
@@ -678,6 +703,7 @@ aox_install() {
         aox_decide_app || return 1
         aox_decide_framework
     fi
+    aox_decide_cameraserver
     aox_select_libraries
     aox_check_pairs || return 1
     aox_apply_edits

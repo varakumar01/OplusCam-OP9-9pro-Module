@@ -65,6 +65,13 @@
       "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19-r2.jar",
       "sha256": "c1339fd1d0ffdfed2fb9766747dc677a141b5c0af8386d38f49402baffd59a0b",
       "note": "oplus-fwk built from the hardware source revision plus fwk/ with javac and D8"
+    },
+    {
+      "name": "cameraserver",
+      "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/cameraserver-axion-2.8-20261007-BP4A.251205.006",
+      "sha256": "a3db2f6b1579cea7275b31bfcaa3d8cd939d8e6c611826e4d587095fb3c33988",
+      "build_id": "BP4A.251205.006",
+      "note": "system/bin/cameraserver of the AxionOS 2.8 build of 2026-10-07 (lineage-23.2 frameworks/av with soong config camera.package_name=com.oplus.packageName)"
     }
   ],
   "files": [

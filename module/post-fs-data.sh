@@ -8,6 +8,17 @@ if [ -f "$MODDIR/aox.sh" ]; then
     . "$MODDIR/aox.sh"
     aox_mount_media
 fi
+# cameraserver, when the installer kept it. It has to sit on a mount without
+# nosuid, or init may not enter the cameraserver domain when it starts it.
+if [ -f "$MODDIR/aox/cameraserver" ]; then
+    SRV=/dev/ooscamera-bin
+    mkdir -p "$SRV" && mount -t tmpfs -o mode=755 tmpfs "$SRV" &&
+        cp "$MODDIR/aox/cameraserver" "$SRV/cameraserver" &&
+        chown root:shell "$SRV/cameraserver" && chmod 755 "$SRV/cameraserver" &&
+        chcon u:object_r:cameraserver_exec:s0 "$SRV/cameraserver" &&
+        mount -o bind "$SRV/cameraserver" /system/bin/cameraserver ||
+        echo "cameraserver not mounted" >> "$MODDIR/mount.log"
+fi
 # Live Photo working directories. The ROM trees create them from
 # /odm/etc/init/init.camera_process.rc, which init reads before modules mount.
 for dir in /data/vendor/camera_process /data/vendor/camera_process/livephoto; do
