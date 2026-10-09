@@ -34,6 +34,10 @@ APP_SKIP = ("system_ext/priv-app/OplusAppPlatform/",)
 PAIR = []
 ADDED = []
 
+# Changed at build time: path -> patch (scripts/patch_sdk.py, patch_hal.py).
+SDK_JAR = "system_ext/framework/com.oplus.camera.unit.sdk.jar"
+HAL = "vendor/lib64/hw/camera.qcom.so"
+
 # Build inputs outside proprietary/: name -> (source, path)
 INPUTS = {
     "privapp-permissions-oplus.xml": ("camera", "configs/permissions/privapp-permissions-oplus.xml"),
@@ -95,6 +99,8 @@ def main():
         kind = "library" if path.endswith(".so") else "data"
         files.append({"path": path, "source": "camera", "group": "app", "kind": kind,
                       **describe(camera.read(source), None)})
+        if path == SDK_JAR:
+            files[-1]["patch"] = "client-package"
 
     def vendor_entries(path, base):
         """One entry, or one per device when the two vendor trees differ."""
@@ -118,6 +124,11 @@ def main():
         for path in vendor_files:
             if path == prefix or (prefix[-1] in "/-" and path.startswith(prefix)):
                 files += vendor_entries(path, {"group": "fix", "kind": kind, "install": "add"})
+    # The HAL: the patched build replaces only the stock library it was made from.
+    for new in vendor_entries(HAL, {"group": "fix", "kind": "library", "install": "replace",
+                                    "patch": "session-key"}):
+        new["replace_sha256"] = [new["sha256"]]
+        files.append(new)
     listed = {entry["path"] for entry in files}
     for path, entry in old.items():
         if path in listed or entry.get("group", "fix") != "fix":

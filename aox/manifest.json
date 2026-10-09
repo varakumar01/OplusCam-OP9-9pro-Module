@@ -65,6 +65,18 @@
       "url": "https://github.com/varakumar01/OplusCam-OP9-9pro-Module/releases/download/inputs/oplus-fwk-6274e19-r2.jar",
       "sha256": "c1339fd1d0ffdfed2fb9766747dc677a141b5c0af8386d38f49402baffd59a0b",
       "note": "oplus-fwk built from the hardware source revision plus fwk/ with javac and D8"
+    },
+    {
+      "name": "smali.jar",
+      "url": "https://bitbucket.org/JesusFreke/smali/downloads/smali-2.5.2.jar",
+      "sha256": "9544299578b16f771d8aa8eaefe0d3718ca03478c16f3c356f2fcf1366bfb116",
+      "note": "smali 2.5.2, to rebuild the unit SDK jar (scripts/patch_sdk.py)"
+    },
+    {
+      "name": "baksmali.jar",
+      "url": "https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.5.2.jar",
+      "sha256": "d3116248cce4f82ec5a31eb7f95ee75daff42ddf6eed0ab573973dc53fbad2e5",
+      "note": "baksmali 2.5.2"
     }
   ],
   "files": [
@@ -147,7 +159,8 @@
       "group": "app",
       "kind": "data",
       "sha256": "68edc269f77a63bbdb7d0f6676c22812d64b2c38f3b3859c39d5b1f7c2246cb5",
-      "size": 1407673
+      "size": 1407673,
+      "patch": "client-package"
     },
     {
       "path": "system_ext/lib64/libAPSClient-cmd-jni.so",
@@ -791,6 +804,77 @@
         "libc.so",
         "libm.so",
         "libdl.so"
+      ]
+    },
+    {
+      "path": "vendor/lib64/hw/camera.qcom.so",
+      "source": "vendor",
+      "group": "fix",
+      "kind": "library",
+      "install": "replace",
+      "patch": "session-key",
+      "sha256": "0961ce49191cbc3cefefd8445162ceae351a3b2d000aa07a9cb0b202bd393519",
+      "size": 13532744,
+      "needed": [
+        "libc++.so",
+        "libcutils.so",
+        "liblog.so",
+        "libofflinelog.so",
+        "libsync.so",
+        "android.hardware.graphics.allocator@3.0.so",
+        "android.hardware.graphics.common@1.1.so",
+        "android.hardware.graphics.mapper@3.0.so",
+        "android.hardware.graphics.mapper@2.0.so",
+        "android.hardware.graphics.mapper@2.1.so",
+        "libhardware.so",
+        "libhidlbase.so",
+        "libhidltransport.so",
+        "libqdMetaData.so",
+        "vendor.qti.hardware.display.allocator@3.0.so",
+        "vendor.qti.hardware.display.mapper@2.0.so",
+        "vendor.qti.hardware.display.mapper@3.0.so",
+        "libcamera_metadata.so",
+        "libutils.so",
+        "libqti_vndfwk_detect.so",
+        "vendor.qti.hardware.vpp@1.1.so",
+        "vendor.qti.hardware.vpp@1.2.so",
+        "android.hardware.graphics.allocator@4.0.so",
+        "android.hardware.graphics.mapper@4.0.so",
+        "libgralloc.qti.so",
+        "libgralloctypes.so",
+        "vendor.qti.hardware.display.allocator@4.0.so",
+        "vendor.qti.hardware.display.mapper@4.0.so",
+        "vendor.qti.hardware.display.mapperextensions@1.1.so",
+        "libbinder.so",
+        "vendor.oplus.hardware.osense.client-V1-ndk_platform.so",
+        "libosenseaidlhalclient.so",
+        "vendor.oplus.hardware.cammidasservice-V1-ndk_platform.so",
+        "libmidasserviceintf_aidl.so",
+        "libcdsprpc.so",
+        "libxml2.so",
+        "libadsprpc.so",
+        "libcamxfdengine.so",
+        "libcamximageformatutils.so",
+        "libcamxstatscore.so",
+        "libofflinedump.so",
+        "libprotobuf-cpp-full-3.9.1.so",
+        "libqmi_cci.so",
+        "libqmi_common_so.so",
+        "libqmi_encdec.so",
+        "libsensorslog.so",
+        "libsnsapi.so",
+        "libhwconfigurationutil.so",
+        "libcamxjson.so",
+        "libcvp2_1.so",
+        "libcvp_common.so",
+        "libsynx.so",
+        "libz.so",
+        "libdl.so",
+        "libc.so",
+        "libm.so"
+      ],
+      "replace_sha256": [
+        "0961ce49191cbc3cefefd8445162ceae351a3b2d000aa07a9cb0b202bd393519"
       ]
     },
     {

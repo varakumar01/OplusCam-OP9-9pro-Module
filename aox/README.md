@@ -42,6 +42,26 @@ overlays the module's jar when one is missing. This replaces a boot jar: the
 first boot is slower, and if that boot does not complete the module disables
 itself on the next one.
 
+## The client package name
+
+The camera HAL runs its OnePlus pipelines (Night, Long exposure, XPan,
+Dual-view video) only when the session parameters carry the vendor tag
+`com.oplus.packageName`. A ROM built from the aox trees has `cameraserver`
+add it (soong config `camera.package_name`); on any other ROM the HAL sees an
+empty name and those modes fail. An app cannot simply set the tag:
+`cameraserver` drops session parameters the HAL does not list in
+`android.request.availableSessionKeys`.
+
+The module changes two files at build time so the camera supplies the tag
+itself, on any Android version:
+
+- `/vendor/lib64/hw/camera.qcom.so`: the session key list entry for the
+  factory tag `engineercamera.agingtest.mode.select` points at `packageName`
+  instead (`scripts/patch_hal.py`, two instructions in two places). It
+  replaces only the stock library it was made from.
+- `com.oplus.camera.unit.sdk.jar`: `Camera2Impl.createNewSession()` sets the
+  tag to `com.oplus.camera` on the session request (`scripts/patch_sdk.py`).
+
 ## Fixes
 
 Every change is conditional and logged to
@@ -84,9 +104,8 @@ These need a ROM built from the aox trees:
 
 ## Known faults of 4.040.557 on these phones
 
-Night, Long exposure, XPan and Dual-view video need a ROM whose camera
-service sends the camera HAL the client package name (`camera.package_name`
-soong config). crDroid 12.12 does not.
+Slo-mo stops the camera provider (`CamX::ImageBuffer::Import`) and the app
+then reopens in Slo-mo. Not solved.
 
 ## Build
 

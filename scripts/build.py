@@ -11,6 +11,8 @@ import subprocess
 import xml.etree.ElementTree as ET
 import zipfile
 
+import patch_hal
+import patch_sdk
 from patch_gralloc import (SOURCE_SHA256 as GRALLOC_SOURCE_SHA256,
                            PATCHED_SHA256 as GRALLOC_PATCHED_SHA256,
                            PREVIOUS_PATCHED_SHA256 as GRALLOC_PREVIOUS_SHA256)
@@ -125,10 +127,14 @@ def stage_aox(stage, cache, uah_client, apksigner="apksigner"):
             raise SystemExit(f"aox checksum mismatch: {path}")
         target = aox_target(stage, path)
         relative = str(target.relative_to(stage))
+        digest = entry["sha256"]
         if entry["group"] == "app":
             target.parent.mkdir(parents=True, exist_ok=True)
             if entry["kind"] == "apk":
                 sign_apk(local, target, cache / "keys", apksigner)
+            elif entry.get("patch") == "client-package":
+                patch_sdk.patch_jar(local, target, cache / "inputs/baksmali.jar", cache / "inputs/smali.jar")
+                digest = hashlib.sha256(target.read_bytes()).hexdigest()
             else:
                 shutil.copyfile(local, target)
             app.append(relative)
@@ -143,11 +149,15 @@ def stage_aox(stage, cache, uah_client, apksigner="apksigner"):
             if device:
                 target = data_dir / "variants" / device / path
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(local, target)
-            lines.append("|".join([path, entry["install"], entry["sha256"],
+            data = local.read_bytes()
+            if entry.get("patch") == "session-key":
+                data = patch_hal.patch(data)
+                digest = hashlib.sha256(data).hexdigest()
+            target.write_bytes(data)
+            lines.append("|".join([path, entry["install"], digest,
                                    ",".join(entry.get("replace_sha256", [])),
                                    ",".join(entry.get("needed", [])), device]))
-        staged[(device + ":" if device else "") + path] = entry["sha256"]
+        staged[(device + ":" if device else "") + path] = digest
         if entry["kind"] == "library" and path.startswith(("odm/", "vendor/")):
             labels.append(relative)
     if uah_client:

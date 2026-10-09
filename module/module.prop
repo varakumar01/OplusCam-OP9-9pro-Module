@@ -1,6 +1,6 @@
 id=ooscamera_op9
 name=Oplus Camera 4.040.557 — OnePlus 9 / 9 Pro
-version=1.0.0-cam4
-versionCode=100
+version=1.1.0-cam4
+versionCode=110
 author=varakumar01
 description=Oplus Camera 4.040.557 for OnePlus 9 / 9 Pro on crDroid (Android 16+), with the aox-cam4 camera fixes (libraries, configs, power hints) applied where the ROM lacks them. Skips the app when the ROM already ships it.
