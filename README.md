@@ -1,18 +1,76 @@
 # Oplus Camera for the OnePlus 9 / 9 Pro
 
-A KernelSU Next module that installs **OplusCamera 4.040.557** on a OnePlus 9
-(`lemonade`) or 9 Pro (`lemonadep`) running crDroid (Android 16 or newer,
-with `oplus-fwk.jar`), together with the camera fixes from the `aox-cam4` branch of the
-[varakumar01](https://github.com/varakumar01) device trees.
+A KernelSU Next module that installs the OnePlus camera on a OnePlus 9
+(`lemonade`) or 9 Pro (`lemonadep`) running **crDroid** (Android 16 or 17),
+together with the camera fixes from the
+[varakumar01](https://github.com/varakumar01) device trees. The installer
+stops on any other ROM.
 
-- If the ROM already ships this camera or a newer one, the app is left alone
-  and only the fixes are applied.
-- If the ROM ships an older one, it is replaced in place.
+There are two builds. Pick one; they use the same module ID and cannot be
+installed together.
 
-[aox/README.md](aox/README.md) lists every change, how each is applied, what
-a module cannot carry and the known faults of this camera version.
+| Build | Camera | Branch | Releases |
+|---|---|---|---|
+| Camera 5 | OplusCamera 5.045.451 | `main` | `v2.x.y-build<N>` (marked latest) |
+| Camera 4 | OplusCamera 4.040.557 | `cam4` | `v1.x.y-cam4-build<N>` |
 
-**crDroid only.** The installer stops on any other ROM.
+Download the zip from [Releases](../../releases). To switch from one build to
+the other, remove the installed module and reboot first.
+
+## What works
+
+Tested on a OnePlus 9 (LE2111), SELinux enforcing, with crDroid 12.12
+(Android 16) and crDroid 13.0 beta (Android 17). "Works" means the capture
+was taken and the file was saved; image quality was only spot-checked. The
+9 Pro has not been tested.
+
+| Function | Camera 5, Android 16 | Camera 5, Android 17 | Camera 4, Android 16 | Camera 4, Android 17 |
+|---|---|---|---|---|
+| Photo 1x | Works | Works | Works | Works |
+| Photo 0.6x (ultra-wide) | Works | Works | Works | Works |
+| Photo 2x | Works | Works | Works | Works |
+| Photo 5x | Works | Works | Works | Works |
+| Front photo | Works | Works | Works | Works |
+| Portrait, rear | Works | Works | Works | Works |
+| Portrait, front | Works | Works | Not tested | Works |
+| Night | Works ¹ | Works | Works ¹ | Works |
+| Video 1080p 30 fps | Works | Works | Works | Works |
+| Video 1080p 60 fps | Works | Works | Not tested | Works |
+| Video 720p 60 fps | Works | Works | Not tested | Works |
+| Video 4K 30 / 60 fps | Works | Works | Not tested | Works |
+| Video 8K | Works | Works (25 fps) | Not tested | Works (25 fps) |
+| Video 120 fps | Not offered | Not offered | Not tested | Not tested |
+| Pro / Master | Works | Not confirmed ² | Works | Works |
+| Film (Movie) | Works | Not tested | Opens, not recorded | Works |
+| Time-lapse | Works | Works | Works | Works |
+| Long exposure | Works ¹ | Works | Works ¹ | Works |
+| XPan | Works ¹ | Works | Works ¹ | Works |
+| Dual-view video | Works ¹ | Works | Works ¹ | Works |
+| Tilt-shift | Works | Works | Works | Works |
+| Pano | Opens, not captured | Opens, not captured | Not tested | Opens, not captured |
+| Text scanner | Opens, not captured | Not tested | Not tested | Opens, not captured |
+| **Slo-mo** | **Fails** ³ | **Fails** ³ | **Fails** ³ | Not retested ³ |
+
+¹ On Android 16 these four modes were verified with an earlier form of the
+same fix (a camera service that sends the client package name). The current
+releases get the name to the HAL another way (see
+[aox/README.md](aox/README.md)); that method was run on Android 17 only.
+
+² The capture did not save in the Android 17 run. The same thing happened
+once on Android 16 and a second attempt worked, so this is probably the test
+and not the mode.
+
+³ Opening Slo-mo stops the camera provider, and the app then reopens in
+Slo-mo and stops again. **Do not open Slo-mo.** To recover, clear the camera
+app's data. Not solved.
+
+Other known faults, seen with Camera 5 on a ROM built from the same trees:
+RAW in Master mode saves a 0-byte file and locks the shutter, the Fresh and
+Emerald film filters save black photos, and 10-bit HEIC is not usable.
+
+One kernel crash dump happened on Android 17 during testing, on a reboot
+shortly after Slo-mo had stopped the camera provider. The crash record was
+lost, so the cause is not known.
 
 ## Install
 
@@ -23,7 +81,8 @@ has to see the module's files. No Mountify or other mounting module is
 needed.
 
 The installer stops, and says why, when the ROM is not crDroid, the phone is
-not a OnePlus 9 / 9 Pro, Android is older than 16, `oplus-fwk.jar` or OverlayFS is missing, or the
+not a OnePlus 9 / 9 Pro, Android is older than 16, `oplus-fwk.jar` or OverlayFS is missing, another
+camera version of this module is installed, or the
 camera could not be made to start on this ROM. The reasons are kept in
 `/data/local/tmp/ooscamera-install.log`. After a successful install the
 decisions are in `/data/adb/modules/ooscamera_op9/aox.log` and the mounts in
@@ -31,8 +90,9 @@ decisions are in `/data/adb/modules/ooscamera_op9/aox.log` and the mounts in
 
 ## Download
 
-Every push to `main` is built by `.github/workflows/build.yml` and published
-under Releases as a prerelease (`v<version>-build<N>`).
+Every push to `main` or `cam4` is built by `.github/workflows/build.yml` and
+published under Releases (`v<version>-build<N>`) with the module zip and its
+SHA-256 attached.
 
 ## How it mounts
 

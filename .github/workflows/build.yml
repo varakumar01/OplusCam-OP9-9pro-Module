@@ -1,15 +1,16 @@
 name: Build module
 
-# Every push to main (and manual runs) builds a KernelSU Next module ZIP from
-# the pinned aox trees, uploads it as a workflow artifact and publishes it as
-# a GitHub prerelease. Pull requests only build and test.
+# Every push to main (OplusCamera 5.x) or cam4 (OplusCamera 4.x), and manual
+# runs, builds a KernelSU Next module ZIP from the pinned aox trees, uploads it
+# as a workflow artifact and publishes it as a GitHub release. The newest
+# main build is marked latest. Pull requests only build and test.
 #
 # The camera APK is signed with the public AOSP platform test key. Libraries
 # collected from a phone (--native-cache) are not part of CI builds.
 
 on:
   push:
-    branches: [main]
+    branches: [main, cam4]
   pull_request:
   workflow_dispatch:
 
@@ -86,23 +87,27 @@ jobs:
           retention-days: 30
 
       - name: Publish release
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/cam4')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="v$VERSION-build$GITHUB_RUN_NUMBER"
+          app=$(python3 -c "import json; print(json.load(open('aox/manifest.json'))['app_version'])")
+          latest=false
+          [ "$GITHUB_REF" = refs/heads/main ] && latest=true
           {
-            echo "Automatic build of \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
+            echo "OplusCamera $app for the OnePlus 9 / 9 Pro on crDroid, module $VERSION,"
+            echo "built from \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
             echo
-            echo "OplusCamera 5.045.451 with the aox camera changes, built from the pinned"
-            echo "aox trees. Install in KernelSU Next and reboot. On a ROM that already"
-            echo "ships this camera (or a newer one) only the fixes are applied. Set"
-            echo "App Profile → Oplus Camera → Umount modules OFF. What the installer"
-            echo "decided is in /data/adb/modules/ooscamera_op9/aox.log."
+            echo "Install \`OplusCamera-OP9-$VERSION.zip\` in KernelSU Next and reboot. Set"
+            echo "App Profile → Oplus Camera → Umount modules OFF. To switch between the"
+            echo "4.x and 5.x modules, remove the installed one and reboot first."
+            echo "What works is listed in the README. What the installer decided is in"
+            echo "/data/adb/modules/ooscamera_op9/aox.log."
             echo
             echo "SHA-256: \`$(cut -d ' ' -f 1 build/OplusCamera-OP9-$VERSION.zip.sha256)\`"
           } > release-notes.md
           gh release create "$tag" \
             "build/OplusCamera-OP9-$VERSION.zip" "build/OplusCamera-OP9-$VERSION.zip.sha256" \
-            --target "$GITHUB_SHA" --title "Oplus Camera $VERSION (build $GITHUB_RUN_NUMBER)" \
-            --notes-file release-notes.md --prerelease
+            --target "$GITHUB_SHA" --title "Oplus Camera $app (module $VERSION, build $GITHUB_RUN_NUMBER)" \
+            --notes-file release-notes.md --latest=$latest
