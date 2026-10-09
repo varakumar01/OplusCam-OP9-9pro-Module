@@ -40,3 +40,47 @@ allow priv_app_36 vendor_hal_camera_postproc_hwservice hwservice_manager find
 allow priv_app_36 hal_camera_default binder { call transfer }
 allow priv_app_36 hal_oplus_osense_aidl_service service_manager find
 allow priv_app_36 qemu_hw_prop file { read open getattr map }
+
+# The rest of the aox opluscamera_app policy, for the same two domains.
+# Hexagon DSP (fastrpc): SNPE, the ArcSoft bokeh and the night algorithms.
+# Without it: "open_device_node failed for domain ID 3 ... Permission denied".
+allow priv_app vendor_qdsp_device chr_file { read write open getattr ioctl map }
+allow priv_app vendor_xdsp_device chr_file { read open getattr ioctl map }
+allow priv_app adsprpcd_file dir { read open getattr search }
+allow priv_app vendor_file dir watch
+allow priv_app vendor_hal_dspmanager_hwservice hwservice_manager find
+allow priv_app vendor_dspservice binder { call transfer }
+allow vendor_dspservice priv_app binder transfer
+allow priv_app vendor_dspservice fd use
+allow priv_app vendor_hal_perf_hwservice hwservice_manager find
+allow priv_app vendor_hal_perf2_service service_manager find
+allow priv_app vendor_hal_perf_default binder { call transfer }
+allow vendor_hal_perf_default priv_app binder transfer
+allow priv_app vendor_hal_perf_default fd use
+allow priv_app vendor_hal_qspmhal_hwservice hwservice_manager find
+allow priv_app vendor_hal_qspmhal_default binder { call transfer }
+allow vendor_hal_qspmhal_default priv_app binder transfer
+allow priv_app vendor_hal_qspmhal_default fd use
+allow priv_app vendor_mpctl_prop file { read open getattr map }
+allow priv_app vendor_persist_camera_file dir { read open getattr search }
+allow priv_app vendor_persist_camera_file file { read open getattr map }
+allow priv_app_36 vendor_qdsp_device chr_file { read write open getattr ioctl map }
+allow priv_app_36 vendor_xdsp_device chr_file { read open getattr ioctl map }
+allow priv_app_36 adsprpcd_file dir { read open getattr search }
+allow priv_app_36 vendor_file dir watch
+allow priv_app_36 vendor_hal_dspmanager_hwservice hwservice_manager find
+allow priv_app_36 vendor_dspservice binder { call transfer }
+allow vendor_dspservice priv_app_36 binder transfer
+allow priv_app_36 vendor_dspservice fd use
+allow priv_app_36 vendor_hal_perf_hwservice hwservice_manager find
+allow priv_app_36 vendor_hal_perf2_service service_manager find
+allow priv_app_36 vendor_hal_perf_default binder { call transfer }
+allow vendor_hal_perf_default priv_app_36 binder transfer
+allow priv_app_36 vendor_hal_perf_default fd use
+allow priv_app_36 vendor_hal_qspmhal_hwservice hwservice_manager find
+allow priv_app_36 vendor_hal_qspmhal_default binder { call transfer }
+allow vendor_hal_qspmhal_default priv_app_36 binder transfer
+allow priv_app_36 vendor_hal_qspmhal_default fd use
+allow priv_app_36 vendor_mpctl_prop file { read open getattr map }
+allow priv_app_36 vendor_persist_camera_file dir { read open getattr search }
+allow priv_app_36 vendor_persist_camera_file file { read open getattr map }
