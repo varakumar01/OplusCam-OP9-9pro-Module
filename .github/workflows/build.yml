@@ -2,8 +2,10 @@ name: Build module
 
 # Every push to main (OplusCamera 5.x) or cam4 (OplusCamera 4.x), and manual
 # runs, builds a KernelSU Next module ZIP from the pinned aox trees, uploads it
-# as a workflow artifact and publishes it as a GitHub release. The newest
-# main build is marked latest. Pull requests only build and test.
+# as a workflow artifact and publishes it as a GitHub release. The Camera 5
+# (main) release is always the one marked latest. Each camera keeps one
+# release: publishing a build removes that camera's earlier ones and their
+# tags. Pull requests only build and test.
 #
 # The camera APK is signed with the public AOSP platform test key. Libraries
 # collected from a phone (--native-cache) are not part of CI builds.
@@ -95,7 +97,18 @@ jobs:
           app=$(python3 -c "import json; print(json.load(open('aox/manifest.json'))['app_version'])")
           latest=false
           [ "$GITHUB_REF" = refs/heads/main ] && latest=true
+          # This camera's earlier releases, and the other camera's current one.
+          tags=$(gh release list --limit 100 --json tagName --jq '.[].tagName' | grep -E '^v.*-build[0-9]+$' || true)
+          if [ "$latest" = true ]; then
+            old=$(echo "$tags" | grep -v -- '-cam4-' || true); other=$(echo "$tags" | grep -- '-cam4-' | head -n 1 || true); other_name="Camera 4"
+          else
+            old=$(echo "$tags" | grep -- '-cam4-' || true); other=$(echo "$tags" | grep -v -- '-cam4-' | head -n 1 || true); other_name="Camera 5"
+          fi
           {
+            if [ -n "$other" ]; then
+              echo "**Looking for $other_name?** It is a separate download: [$other]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$other)"
+              echo
+            fi
             echo "OplusCamera $app for the OnePlus 9 / 9 Pro on crDroid, module $VERSION,"
             echo "built from \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
             echo
@@ -111,3 +124,9 @@ jobs:
             "build/OplusCamera-OP9-$VERSION.zip" "build/OplusCamera-OP9-$VERSION.zip.sha256" \
             --target "$GITHUB_SHA" --title "Oplus Camera $app (module $VERSION, build $GITHUB_RUN_NUMBER)" \
             --notes-file release-notes.md --latest=$latest
+          for tag in $old; do
+            gh release delete "$tag" --cleanup-tag --yes
+          done
+          # A Camera 4 build must never take over "latest".
+          newest=$(gh release list --limit 100 --json tagName --jq '.[].tagName' | grep -E '^v.*-build[0-9]+$' | grep -v -- '-cam4-' | head -n 1 || true)
+          [ -z "$newest" ] || gh release edit "$newest" --latest

@@ -11,7 +11,7 @@ installed together.
 
 | Build | Camera | Branch | Releases |
 |---|---|---|---|
-| Camera 5 | OplusCamera 5.045.451 | `main` | `v2.x.y-build<N>` (marked latest) |
+| Camera 5 | OplusCamera 5.045.451 | `main` | `v2.x.y-build<N>`, always marked latest |
 | Camera 4 | OplusCamera 4.040.557 | `cam4` | `v1.x.y-cam4-build<N>` |
 
 Download the zip from [Releases](../../releases). To switch from one build to
@@ -92,7 +92,8 @@ decisions are in `/data/adb/modules/ooscamera_op9/aox.log` and the mounts in
 
 Every push to `main` or `cam4` is built by `.github/workflows/build.yml` and
 published under Releases (`v<version>-build<N>`) with the module zip and its
-SHA-256 attached.
+SHA-256 attached. Each camera keeps one release: a new build replaces that
+camera's previous one. The Camera 5 release is always the one marked latest.
 
 ## How it mounts
 
