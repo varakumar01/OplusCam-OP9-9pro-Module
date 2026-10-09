@@ -1,8 +1,8 @@
 # Oplus Camera for the OnePlus 9 / 9 Pro
 
 A KernelSU Next module that installs **OplusCamera 5.045.451** on a OnePlus 9
-(`lemonade`) or 9 Pro (`lemonadep`) running an Android 16+ ROM that has
-`oplus-fwk.jar`, together with the camera fixes from the `aox` branch of the
+(`lemonade`) or 9 Pro (`lemonadep`) running crDroid (Android 16 or newer,
+with `oplus-fwk.jar`), together with the camera fixes from the `aox` branch of the
 [varakumar01](https://github.com/varakumar01) device trees.
 
 - If the ROM already ships this camera or a newer one, the app is left alone
@@ -13,8 +13,7 @@ A KernelSU Next module that installs **OplusCamera 5.045.451** on a OnePlus 9
 [aox/README.md](aox/README.md) lists every change, how each is applied, what
 a module cannot carry and the known faults of this camera version.
 
-**Status:** built and host-tested only. Version 2.0.0 has not been installed
-on a phone yet; the 9 Pro path has never run on a 9 Pro.
+**crDroid only.** The installer stops on any other ROM.
 
 ## Install
 
@@ -24,8 +23,8 @@ Camera** turn **Umount modules** off and leave root access off: the camera
 has to see the module's files. No Mountify or other mounting module is
 needed.
 
-The installer stops, and says why, when the phone is not a OnePlus 9 / 9 Pro,
-Android is older than 16, `oplus-fwk.jar` or OverlayFS is missing, or the
+The installer stops, and says why, when the ROM is not crDroid, the phone is
+not a OnePlus 9 / 9 Pro, Android is older than 16, `oplus-fwk.jar` or OverlayFS is missing, or the
 camera could not be made to start on this ROM. The reasons are kept in
 `/data/local/tmp/ooscamera-install.log`. After a successful install the
 decisions are in `/data/adb/modules/ooscamera_op9/aox.log` and the mounts in

@@ -1,7 +1,9 @@
 #!/system/bin/sh
 [ "$KSU" = "true" ] || abort "This prototype requires KernelSU Next."
-# OnePlus 9 (lemonade) and 9 Pro (lemonadep), any ROM: AOSP-based ROMs use the
-# codename, OxygenOS-derived builds the marketing name.
+[ -n "$(getprop ro.crdroid.build.version)$(getprop ro.crdroid.version)$(getprop ro.crdroid.device)" ] ||
+    abort "This module is for crDroid only."
+# OnePlus 9 (lemonade) and 9 Pro (lemonadep): crDroid builds report the
+# codename or the marketing name.
 camera_device=
 for prop in ro.product.vendor.device ro.product.device ro.build.product ro.crdroid.device; do
     case "$(getprop "$prop")" in
