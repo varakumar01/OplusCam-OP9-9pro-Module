@@ -1,14 +1,13 @@
 # Oplus Camera for the OnePlus 9 / 9 Pro
 
-A KernelSU Next module that installs **OplusCamera 5.045.451** on a OnePlus 9
+A KernelSU Next module that installs **OplusCamera 4.040.557** on a OnePlus 9
 (`lemonade`) or 9 Pro (`lemonadep`) running crDroid (Android 16 or newer,
-with `oplus-fwk.jar`), together with the camera fixes from the `aox` branch of the
+with `oplus-fwk.jar`), together with the camera fixes from the `aox-cam4` branch of the
 [varakumar01](https://github.com/varakumar01) device trees.
 
 - If the ROM already ships this camera or a newer one, the app is left alone
   and only the fixes are applied.
 - If the ROM ships an older one, it is replaced in place.
-- If the ROM's `oplus-fwk.jar` is too old for 5.x, the module overlays its own.
 
 [aox/README.md](aox/README.md) lists every change, how each is applied, what
 a module cannot carry and the known faults of this camera version.

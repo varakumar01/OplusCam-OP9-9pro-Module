@@ -620,7 +620,7 @@ EOF
     return 0
 }
 
-# The 5.x app needs classes older oplus-fwk.jar builds lack. Keep the staged
+# A staged oplus-fwk.jar is for ROMs whose own lacks marker classes. Keep the staged
 # boot jar only when the ROM's own lacks one of them.
 aox_decide_framework() {
     jar="$MODPATH/system/framework/oplus-fwk.jar"

@@ -184,7 +184,7 @@ def stage_aox(stage, cache, uah_client, apksigner="apksigner"):
         '<config><hidden-api-whitelisted-app package="com.oplus.camera"/></config>\n')
     app += [str(permissions.relative_to(stage)), str(sysconfig.relative_to(stage))]
 
-    # The boot jar the 5.x app needs; the installer keeps it only when the
+    # An optional boot jar input; the installer keeps it only when the
     # ROM's own oplus-fwk.jar lacks the classes listed in fwk-markers.txt.
     framework = cache / "inputs/oplus-fwk.jar"
     if framework.exists():

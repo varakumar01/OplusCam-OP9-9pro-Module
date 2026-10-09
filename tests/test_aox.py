@@ -78,11 +78,9 @@ class Installer(unittest.TestCase):
         log = self.install()
         self.assertNotIn("skip", log)
         for path in CONFIGS:
-            if path.endswith("oplus_camera_aps_config"):
-                continue  # no edit: aox leaves the stock file alone
             result = staged(self.modpath, path).read_bytes()
             head = (FIXTURES / "head" / path).read_bytes()
-            if path.endswith("oplus_camera_config"):
+            if path.endswith(("oplus_camera_config", "oplus_camera_aps_config")):
                 # New tags are appended rather than inserted mid-file.
                 tags = lambda data: {e["VendorTag"]: e for e in json.loads(data)}
                 self.assertEqual(tags(result), tags(head), path)
@@ -103,7 +101,7 @@ class Installer(unittest.TestCase):
             target = staged(self.modpath, path)
             # Untouched files are not staged: the device copy already is head.
             result = target.read_bytes() if target.exists() else (self.root / path).read_bytes()
-            if path.endswith("oplus_camera_config"):
+            if path.endswith(("oplus_camera_config", "oplus_camera_aps_config")):
                 self.assertEqual(tags(result), tags(head), path)
             else:
                 # The Pro tree's jni.version line ends in LF inside a CRLF file.

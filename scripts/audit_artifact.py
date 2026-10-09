@@ -36,7 +36,7 @@ def allowed_payload(name):
         return True
     if name.startswith("aox/blocks/") and name.endswith((".old", ".new")):
         return True
-    # Per-device files and the 5.x filter tables and models.
+    # Per-device files and filter tables.
     if name.startswith(("aox/variants/lemonade/odm/", "aox/variants/lemonadep/odm/",
                         "system/vendor/odm/etc/camera/meishe_lut/",
                         "system/vendor/odm/etc/camera/filters_lut/")):

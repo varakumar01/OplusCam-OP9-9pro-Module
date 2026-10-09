@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate aox/manifest.json from local clones of the aox trees.
 
-    python scripts/gen_manifest.py --trees /path/with/the/clones [--ref origin/aox]
+    python scripts/gen_manifest.py --trees /path/with/the/clones [--ref origin/aox-cam4]
 
 Install rules of entries already in the manifest are kept; hashes, sizes and
 DT_NEEDED lists are recomputed at the given ref. The app set is everything
@@ -29,24 +29,10 @@ SOURCES = {
 APK = "system_ext/priv-app/OplusCamera/OplusCamera.apk"
 # A separate OEM privileged application; the camera runs without it.
 APP_SKIP = ("system_ext/priv-app/OplusAppPlatform/",)
-# Libraries the 5.x app is paired with: they replace the device copy whenever
-# the module's own app is the one in use.
-PAIR = [
-    "odm/lib64/libAlgoInterface.so",
-    "odm/lib64/libAlgoProcess.so",
-    "odm/lib64/libPreviewDecisionOld.so",
-    "odm/lib64/libFilterWrapper.so",
-]
-# 5.x additions to /odm: (path, or a prefix ending in / or -, kind)
-ADDED = [
-    ("odm/lib64/libaideblur.so", "library"),
-    ("odm/lib64/libextendfile.so", "library"),
-    ("odm/lib64/libmsnativefilter.so", "library"),
-    ("odm/etc/camera/meishe_lut/", "data"),
-    ("odm/etc/camera/filters_lut/gt-", "data"),
-    ("odm/etc/camera/selfbokehmodel.bin", "data"),
-    ("odm/etc/camera/selfbokehParam.json", "data"),
-]
+# OplusCamera 4.x runs on the stock /odm libraries: nothing is paired with
+# the app and nothing is added for it.
+PAIR = []
+ADDED = []
 
 # Build inputs outside proprietary/: name -> (source, path)
 INPUTS = {
@@ -87,7 +73,7 @@ def describe(data, old):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--trees", type=pathlib.Path, required=True)
-    parser.add_argument("--ref", default="origin/aox")
+    parser.add_argument("--ref", default="origin/aox-cam4")
     args = parser.parse_args()
     trees = {name: Tree(args.trees / directory, args.ref) for name, directory in SOURCES.items()}
     previous = json.loads(MANIFEST.read_text())
@@ -117,7 +103,8 @@ def main():
             if "proprietary/" + path in trees[name].files:
                 blobs[device] = (name, trees[name].read("proprietary/" + path))
         if not blobs:
-            raise SystemExit(f"Not in either vendor tree: {path}")
+            print(f"dropped, not in either vendor tree at {args.ref}: {path}")
+            return []
         if len({data for _, data in blobs.values()}) == 1 and len(blobs) == 2:
             name, data = blobs["lemonade"]
             return [{"path": path, "source": name, **base, **describe(data, old.get(path))}]
@@ -154,7 +141,7 @@ def main():
     inputs += [entry for entry in previous.get("inputs", []) if "url" in entry]
 
     manifest = {
-        "branch": "aox",
+        "branch": args.ref.removeprefix("origin/"),
         "app_version": previous.get("app_version", ""),
         "sources": {name: {"repository": tree.url(), "revision": tree.revision}
                     for name, tree in trees.items()},

@@ -1,6 +1,6 @@
 # aox camera configuration edits, applied at install time.
 # Source: varakumar01/proprietary_vendor_oneplus_lemonade and _lemonadep, branch
-# aox (OplusCamera 5.045.451). See aox/README.md.
+# aox-cam4 (OplusCamera 4.040.557). See aox/README.md.
 #
 # tag|file|VendorTag|Type|Count|from|to        from '*': any value, append if missing
 # ini|file|Section|Key|from|to                 from '-': also add when missing
@@ -11,65 +11,21 @@
 # audiocap|-|encoder|maxBitRate                media profiles AudioEncoderCap
 # only|device|<edit>                           lemonade (9) or lemonadep (9 Pro) only
 
-# oplus_camera_config: every tag that differs from the stock file. The 5.x
-# feature tags, 4K 60fps, 4K focus tracking, Text Scanner, recorder surface
-# release.
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.fuji.style.filter.support|Byte|1|*|1
+# oplus_camera_config: 4K 60fps, 4K focus tracking, Text Scanner export,
+# recorder surface release.
 only|lemonade|tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.4k.60fps.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.portrait.master.filter.type.list|String|3|*|Radiance.cube.rgb.bin,Serenity.cube.rgb.bin,Emerald.cube.rgb.bin
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.color.dataspace.value|String|3|*|1,2,2
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.support.dolby.video.live.shot|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.video.only.colortransfer.sdr.video|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.fast.shot.livephoto.mutex.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.clear.video|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.livePhoto.autoMicro.need.match.preview.timestamp|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.video.only.before.shutter|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.video.max.duration|Int32|1|*|3200
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.video.min.duration|Int32|1|*|200
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.audio.timestamp.offset|Long|1|*|100000000
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.pts.use.timestamp|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.livephoto.gyro.threshould.vector|Float|2|*|2.6, 2.6
-tag|odm/etc/camera/config/oplus_camera_config|com.ocs.camera.ipu.filter.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.video.sound.focus.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.global.ev.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.street.global.ev.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.ocs.camera.ipu.watermark.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.ocs.camera.ipu.frontblur.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.ocs.camera.ipu.backblur.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.ocs.camera.ipu.soft.light.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.motion.capture.max.zoom.value|Float|1|*|30.0
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.motion.capture.sat.zoom.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.motion.capture.new.operation.mode|Byte|1|*|1
-only|lemonade|tag|odm/etc/camera/config/oplus_camera_config|com.oplus.more.tele.zoom.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.motion.capture.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.xpan.global.ev.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.portrait.global.ev.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.video.global.ev.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.hasselblad.watermark.guide.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.support.custom.hasselblad.watermark.sellmode.default.open|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.hasselblad.portrait.calibration|Float|6|*|30.0,3.5,65.0,3.5,90.0,1.9
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.zsl.capture.no.need.preview.stream|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.gyro.threshould.vector|Float|2|*|2.6, 2.6
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.camera.support.ai.master.watermark|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.master.mode.support|Float|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.master.mode.version|Float|1|*|2.0
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.master.mode.vignette.process.in.lsc.and.soft|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.surface.release.support|Byte|1|*|1
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.export.super.text.support|Byte|1|*|1
 tag|odm/etc/camera/config/oplus_camera_config|com.oplus.video.4k.track.focus.support|Byte|1|*|1
-# encode normal-size HEIF photos in the app, not in APS (Photo, Portrait and
-# XPAN HEIF came out as a few hundred bytes)
-tag|odm/etc/camera/config/oplus_camera_config|com.oplus.only.high.picture.size.heif.in.aps|Byte|1|*|1
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.export.super.text.support|Byte|1|*|1
+tag|odm/etc/camera/config/oplus_camera_config|com.oplus.feature.video.surface.release.support|Byte|1|*|1
+# encode JPEGs with the hardware encoder in the camera provider
+tag|odm/etc/camera/config/oplus_camera_aps_config|com.oplus.aps.support.hw_jpeg|Int32|1|*|1
 
 # keep the main sensor streaming while the zoom moves below 1x
 only|lemonade|ini|odm/etc/camera/CameraHWConfiguration.config|SatSmoothZoom|closeSlaveThresholdTime|-|1
 ini|odm/etc/camera/CameraHWConfiguration.config|UltraWideStrategy|fixActiveMapList|0x1|0x3
 only|lemonade|zoommin|odm/etc/camera/CameraHWConfiguration.config|ZoomRange|custom.video.60fps.zoom.range|custom.video.zoom.range|1.0
-# keep aps_algo_supernight for night mode's rear entity (stock value)
+# super night for night mode's rear entity
 modekey|odm/etc/camera/config/oplus_camera_algo_switch_config|night|aps_algo_supernight|*|1
-# the APS JNI interface version the 5.x app and libAlgoInterface agree on
-after|odm/etc/camera/config/camera_unit_config|com.oplus.authed.white.list|com.oplus.camera.jni.version|V002.000.000
 # video_120fps in rear_main's video feature table, mapped to the constrained
 # high-speed operation mode (the 9 Pro's stock file already has both)
 block|odm/etc/camera/config/camera_unit_config|video-120fps-fps-map,video-120fps-rear-main
