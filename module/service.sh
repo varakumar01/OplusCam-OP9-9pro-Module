@@ -47,6 +47,6 @@ CAMERA_VISIBILITY_TOOL=/data/adb/ooscamera-visibility/cleanup-tool
 # Inotify observes disable/removal promptly without repeatedly running commands.
 "$CAMERA_VISIBILITY_TOOL" watch "$MODDIR" || exit 1
 camera_restore_visibility || exit 1
-rm -f /data/adb/ooscamera-visibility/cleanup-tool
+rm -f /data/adb/ooscamera-visibility/cleanup-tool /data/adb/ooscamera-visibility/lock
 rmdir /data/adb/ooscamera-visibility 2>/dev/null
 exit 0
