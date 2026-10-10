@@ -65,7 +65,9 @@ ui_print "Standalone mounting: Mountify is not required."
 ui_print "A reboot is required for system permissions and library discovery."
 if [ -f "$MODPATH/ksu-visibility" ]; then
     set_perm "$MODPATH/ksu-visibility" 0 0 0700
-    "$MODPATH/ksu-visibility" check || abort "KernelSU profile interface unavailable; automatic camera setup cannot run."
+    # Without the helper the boot scripts do nothing and the App Profile
+    # switch is the user's to set; the message at the end says which it is.
+    "$MODPATH/ksu-visibility" check >/dev/null 2>&1 || rm -f "$MODPATH/ksu-visibility"
 fi
 if [ -f "$MODPATH/aox.sh" ]; then
     # shellcheck source=module/aox.sh
@@ -110,8 +112,11 @@ if ! camera_prepare_image; then
 fi
 ui_print "Ready. Reboot, open Oplus Camera and grant its permissions."
 if [ -f "$MODPATH/ksu-visibility" ]; then
-    ui_print "Camera and launcher visibility will be configured automatically."
+    ui_print "After the reboot the module turns Umount modules off for the camera"
+    ui_print "and the launcher by itself. If the camera still closes on opening:"
+    ui_print "KernelSU App Profile: Camera -> Custom -> Umount modules OFF."
 else
+    ui_print "This KernelSU has no app profile interface the module can use."
     ui_print "KernelSU App Profile: Camera -> Custom -> Umount modules OFF."
     ui_print "Leave camera Superuser access OFF."
 fi

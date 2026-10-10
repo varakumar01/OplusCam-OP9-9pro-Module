@@ -66,10 +66,14 @@ jobs:
           export PATH="/usr/lib/llvm-18/bin:$PATH"
           python3 -m pytest -q tests
 
+      - name: Build the app profile helper
+        run: python3 scripts/prepare_visibility.py --output-dir build/visibility
+
       - name: Build module
         run: |
           cd scripts
-          python3 build.py --uah-client ../.cache/aox/liboplus-uah-client.so
+          python3 build.py --uah-client ../.cache/aox/liboplus-uah-client.so \
+            --visibility-cache ../build/visibility
           cd ..
           version=$(sed -n 's/^version=//p' module/module.prop)
           echo "VERSION=$version" >> "$GITHUB_ENV"
@@ -112,9 +116,10 @@ jobs:
             echo "OplusCamera $app for the OnePlus 9 / 9 Pro on crDroid, module $VERSION,"
             echo "built from \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
             echo
-            echo "Install \`OplusCamera-OP9-$VERSION.zip\` in KernelSU Next and reboot. Set"
-            echo "App Profile → Oplus Camera → Umount modules OFF. To switch between the"
-            echo "4.x and 5.x modules, remove the installed one and reboot first."
+            echo "Install \`OplusCamera-OP9-$VERSION.zip\` in KernelSU Next and reboot. The"
+            echo "module turns Umount modules off for the camera by itself; if the installer"
+            echo "says it cannot, set App Profile → Oplus Camera → Umount modules OFF. To"
+            echo "switch between the 4.x and 5.x modules, remove the installed one and reboot first."
             echo "What works is listed in the README. What the installer decided is in"
             echo "/data/adb/modules/ooscamera_op9/aox.log."
             echo

@@ -243,7 +243,7 @@ def main():
     parser.add_argument("--gralloc32-cache", type=pathlib.Path,
                         help="Matching ARMv7 graphics trial; requires --gralloc-cache")
     parser.add_argument("--visibility-cache", type=pathlib.Path,
-                        help="Experimental automatic KernelSU setup; requires --candidate-version")
+                        help="App profile helper from prepare_visibility.py")
     parser.add_argument("--native-cache", type=pathlib.Path, help="Verified libraries collected from this phone")
     parser.add_argument("--camera-config", type=pathlib.Path, help="Device camera configuration override")
     parser.add_argument("--aox-cache", type=pathlib.Path, default=ROOT / ".cache/aox",
@@ -253,8 +253,6 @@ def main():
     parser.add_argument("--apksigner", default="apksigner",
                         help="apksigner from Android SDK Build Tools")
     args = parser.parse_args()
-    if args.visibility_cache and not args.candidate_version:
-        raise SystemExit("Automatic profile setup requires --candidate-version until validated")
     if args.candidate_version and not re.fullmatch(r"[0-9]+(?:\.[0-9]+)*-[A-Za-z0-9.-]+", args.candidate_version):
         raise SystemExit("Candidate version must include a prerelease suffix")
     if args.gralloc_cache and not args.candidate_version:
@@ -341,15 +339,14 @@ def main():
                  "mount-camera.sh", "boot-completed.sh", "skip_mount"]:
         shutil.copyfile(ROOT / "module" / name, stage / name)
     if args.visibility_cache:
-        from prepare_visibility import REVISION as VISIBILITY_REVISION
+        from prepare_visibility import PROFILE_VERSIONS
         visibility = json.loads((args.visibility_cache / "source.json").read_text())
         helper = (args.visibility_cache / "ksu-visibility").read_bytes()
-        if (visibility.get("revision") != VISIBILITY_REVISION or visibility.get("profile_abi") != 3 or
+        if (visibility.get("profile_versions") != PROFILE_VERSIONS or
                 visibility.get("binary_sha256") != hashlib.sha256(helper).hexdigest() or
                 visibility.get("source_sha256") != hashlib.sha256((ROOT / "native/ksu_visibility.c").read_bytes()).hexdigest()):
             raise SystemExit("Visibility helper source or payload mismatch")
         (stage / "ksu-visibility").write_bytes(helper)
-        visibility["status"] = "Experimental automatic setup; candidate device checks pending"
         (stage / "visibility-source.json").write_text(json.dumps(visibility, indent=2) + "\n")
         for name in ("service.sh", "uninstall.sh", "visibility.sh"):
             shutil.copyfile(ROOT / "module" / name, stage / name)

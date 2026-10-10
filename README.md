@@ -75,10 +75,17 @@ lost, so the cause is not known.
 ## Install
 
 In KernelSU Next: **Modules → Install**, pick `OplusCamera-OP9-<version>.zip`,
-reboot. Open Oplus Camera and grant its permissions. In **App Profile → OOS
-Camera** turn **Umount modules** off and leave root access off: the camera
-has to see the module's files. No Mountify or other mounting module is
-needed.
+reboot. Open Oplus Camera and grant its permissions. No Mountify or other
+mounting module is needed.
+
+The camera has to see the module's files, which KernelSU hides from apps by
+default. After the reboot the module turns **Umount modules** off for the
+camera and for the launcher by itself, and puts both profiles back when it is
+disabled or removed. It does not grant root to anything. If the installer says
+this KernelSU has no app profile interface it can use, or the camera closes
+as soon as it opens, set it by hand: **App Profile → Oplus Camera → Custom →
+Umount modules** off, root access off. What the module did is in
+`/data/adb/modules/ooscamera_op9/visibility.log`.
 
 The installer stops, and says why, when the ROM is not crDroid, the phone is
 not a OnePlus 9 / 9 Pro, Android is older than 16, `oplus-fwk.jar` or OverlayFS is missing, another

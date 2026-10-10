@@ -1,12 +1,11 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Experimental KernelSU profile-v3 visibility helper, NOT a release payload.
- * Uses the pinned upstream UAPI supplied by prepare_visibility.py.
+ * Turns "Umount modules" off in the KernelSU app profile of one app, and puts
+ * the profile back later. Works with app profile versions 3 and 4.
  *
  * Profile ioctls require the manager's real UID. A root caller delegates that
  * identity only for an ioctl, retaining its effective/saved root UID, then
- * restores its real UID immediately. This needs device validation and is not
- * wired into installation or boot. No KernelSU database or global defaults
+ * restores its real UID immediately. No KernelSU database or global defaults
  * are edited, and root access is never granted or revoked.
  */
 #define _GNU_SOURCE
@@ -23,12 +22,72 @@
 #include <poll.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+#include <stddef.h>
 #include <unistd.h>
-#include "uapi/supercall.h"
+#include <linux/ioctl.h>
+#include <linux/types.h>
 
+/*
+ * The parts of KernelSU's uapi/app_profile.h and uapi/supercall.h used here,
+ * in their version 4 form. Version 3 has no root_profile.flags, which makes
+ * the structure 8 bytes shorter at its end; everything this helper reads or
+ * writes (the profile of an app without root) sits at the same offsets in
+ * both. The kernel takes the size from its own headers, not from the ioctl
+ * number, so one buffer serves both.
+ */
+#define KSU_INSTALL_MAGIC1 0xDEADBEEF
+#define KSU_INSTALL_MAGIC2 0xCAFEBABE
+#define KSU_MAX_PACKAGE_NAME 256
+#define KSU_MAX_GROUPS 32
+#define KSU_SELINUX_DOMAIN 64
+struct root_profile {
+    __s32 uid;
+    __s32 gid;
+    __u32 groups_count;
+    __s32 groups[KSU_MAX_GROUPS];
+    struct { __u64 effective, permitted, inheritable; } capabilities;
+    char selinux_domain[KSU_SELINUX_DOMAIN];
+    __s32 namespaces;
+    __u64 flags;
+};
+struct non_root_profile { bool umount_modules; };
+struct app_profile {
+    __u32 version;
+    char key[KSU_MAX_PACKAGE_NAME];
+    __s32 curr_uid;
+    bool allow_su;
+    union {
+        struct {
+            bool use_default;
+            char template_name[KSU_MAX_PACKAGE_NAME];
+            struct root_profile profile;
+        } rp_config;
+        struct {
+            bool use_default;
+            struct non_root_profile profile;
+        } nrp_config;
+    };
+};
+struct ksu_uid_should_umount_cmd { __u32 uid; __u8 should_umount; };
+struct ksu_get_manager_appid_cmd { __u32 appid; };
+#define KSU_IOCTL_UID_SHOULD_UMOUNT _IOC(_IOC_READ | _IOC_WRITE, 'K', 9, 0)
+#define KSU_IOCTL_GET_MANAGER_APPID _IOC(_IOC_READ, 'K', 10, 0)
+#define KSU_IOCTL_GET_APP_PROFILE _IOC(_IOC_READ | _IOC_WRITE, 'K', 11, 0)
+#define KSU_IOCTL_SET_APP_PROFILE _IOC(_IOC_WRITE, 'K', 12, 0)
+_Static_assert(sizeof(struct app_profile) == 784, "Unexpected profile layout");
+_Static_assert(offsetof(struct app_profile, curr_uid) == 260, "Unexpected profile layout");
+_Static_assert(offsetof(struct app_profile, allow_su) == 264, "Unexpected profile layout");
+_Static_assert(offsetof(struct app_profile, nrp_config.use_default) == 272, "Unexpected profile layout");
+_Static_assert(offsetof(struct app_profile, nrp_config.profile.umount_modules) == 273, "Unexpected profile layout");
+/* Room to spare, should a kernel's structure be longer than the one above. */
+union profile_io {
+    struct app_profile profile;
+    char room[4096];
+};
+
+#ifndef STATE_DIR
 #define STATE_DIR "/data/adb/ooscamera-visibility"
-_Static_assert(KSU_APP_PROFILE_VER == 3, "Only profile v3 is supported");
-_Static_assert(sizeof(struct app_profile) == 776, "Unexpected profile ABI");
+#endif
 struct saved_state {
     char magic[8];
     struct app_profile original;
@@ -36,6 +95,8 @@ struct saved_state {
 static int driver = -1;
 static uid_t manager;
 static int state_lock = -1;
+/* The kernel's profile version: 3 or 4, or 0 until a read or write shows it. */
+static __u32 profile_version;
 
 static void fail(const char *message) {
     perror(message);
@@ -56,29 +117,47 @@ static bool visible(int uid) {
     return !cmd.should_umount;
 }
 
+static bool known_version(__u32 version) { return version == 3 || version == 4; }
+
+/* An app with no profile comes back with use_default set and version 0. */
 static struct app_profile read_profile(const char *package, int uid) {
-    struct ksu_get_app_profile_cmd cmd = {0};
-    cmd.profile.version = KSU_APP_PROFILE_VER;
-    cmd.profile.current_uid = uid;
+    union profile_io cmd = {0};
+    cmd.profile.curr_uid = uid;
     strcpy(cmd.profile.key, package);
     if (manager_ioctl(KSU_IOCTL_GET_APP_PROFILE, &cmd)) {
         if (errno != ENOENT) fail("Read app profile");
+        cmd.profile.version = profile_version;
         cmd.profile.nrp_config.use_default = true;
+    } else {
+        if (!known_version(cmd.profile.version)) { errno = EINVAL; fail("Unsupported profile version"); }
+        profile_version = cmd.profile.version;
     }
-    if (cmd.profile.version != KSU_APP_PROFILE_VER ||
-        cmd.profile.current_uid != uid ||
+    if (cmd.profile.curr_uid != uid ||
         strnlen(cmd.profile.key, sizeof(cmd.profile.key)) == sizeof(cmd.profile.key) ||
         strcmp(cmd.profile.key, package)) {
         errno = EINVAL;
-        fail("Profile identity or ABI mismatch");
+        fail("Profile identity mismatch");
     }
     return cmd.profile;
 }
 
+/*
+ * With the version still unknown, 3 is offered before 4: a version 4 kernel
+ * refuses 3 with EINVAL and changes nothing, whereas a version 3 kernel would
+ * store a 4.
+ */
 static void write_profile(struct app_profile profile) {
     if (profile.allow_su) { errno = EPERM; fail("Refuse root-profile mutation"); }
-    struct ksu_set_app_profile_cmd cmd = {.profile = profile};
-    if (manager_ioctl(KSU_IOCTL_SET_APP_PROFILE, &cmd)) fail("Write mount policy");
+    if (!profile.version) profile.version = profile_version;
+    union profile_io cmd = {0};
+    __u32 first = profile.version ? profile.version : 3, last = profile.version ? profile.version : 4;
+    for (__u32 version = first; version <= last; version++) {
+        cmd.profile = profile;
+        cmd.profile.version = version;
+        if (!manager_ioctl(KSU_IOCTL_SET_APP_PROFILE, &cmd)) { profile_version = version; return; }
+        if (errno != EINVAL) break;
+    }
+    fail("Write mount policy");
 }
 
 /* Independently verify package ownership; never modify a shared Android UID. */
@@ -149,9 +228,9 @@ static bool load_state(const char *path, struct saved_state *state, const char *
         errno = EINVAL; fail("Unsafe or incomplete visibility backup");
     }
     close(fd);
-    if (memcmp(state->magic, "OOSVIS3", 8) || state->original.allow_su ||
-        state->original.version != KSU_APP_PROFILE_VER ||
-        state->original.current_uid != uid ||
+    if (memcmp(state->magic, "OOSVIS4", 8) || state->original.allow_su ||
+        (state->original.version && !known_version(state->original.version)) ||
+        state->original.curr_uid != uid ||
         strnlen(state->original.key, sizeof(state->original.key)) == sizeof(state->original.key) ||
         strcmp(state->original.key, package)) {
         errno = EINVAL; fail("Visibility backup identity mismatch");
@@ -210,8 +289,16 @@ int main(int argc, char **argv) {
         if (manager && (manager < 10000 || manager >= 100000)) {
             errno = EINVAL; fail("Unsupported manager identity");
         }
-        /* Read only: an absent profile also proves access to this ioctl ABI. */
-        (void)read_profile("com.oplus.camera", 10000);
+        /* Read only. Whatever profile UID 10000 has, or none, the call itself
+         * must be accepted, and a profile that comes back must be one this
+         * helper can read. */
+        union profile_io cmd = {0};
+        cmd.profile.curr_uid = 10000;
+        if (!manager_ioctl(KSU_IOCTL_GET_APP_PROFILE, &cmd)) {
+            if (!known_version(cmd.profile.version)) { errno = EINVAL; fail("Unsupported profile version"); }
+        } else if (errno != ENOENT) {
+            fail("Read app profile");
+        }
         puts("KernelSU profile interface accessible");
         return 0;
     }
@@ -236,8 +323,6 @@ int main(int argc, char **argv) {
     verify_package(package, (int)uid, restoring);
     syscall(SYS_reboot, KSU_INSTALL_MAGIC1, KSU_INSTALL_MAGIC2, 0, &driver);
     if (driver < 0) fail("Open KernelSU driver");
-    struct ksu_get_info_cmd info = {0};
-    if (ioctl(driver, KSU_IOCTL_GET_INFO, &info) || !info.version) fail("Read KernelSU interface");
     struct ksu_get_manager_appid_cmd identity = {0};
     if (ioctl(driver, KSU_IOCTL_GET_MANAGER_APPID, &identity)) fail("Read manager identity");
     manager = identity.appid;
@@ -247,7 +332,7 @@ int main(int argc, char **argv) {
     if (strcmp(argv[1], "probe")) lock_state();
     struct app_profile current = read_profile(package, (int)uid);
     if (!strcmp(argv[1], "probe")) {
-        printf("Profile v3 accessible; root=%s; modules=%s\n",
+        printf("Profile v%u accessible; root=%s; modules=%s\n", current.version,
                current.allow_su ? "on" : "off", visible((int)uid) ? "visible" : "hidden");
         return 0;
     }
@@ -257,6 +342,8 @@ int main(int argc, char **argv) {
     bool saved = load_state(path, &state, package, (int)uid);
     if (restoring) {
         if (!saved) { puts("No visibility policy to restore"); return 0; }
+        /* Saved from an app that had no profile yet: the version was not known. */
+        if (!state.original.version) state.original.version = current.version;
         struct app_profile expected = applied(state.original);
         if (memcmp(&current, &expected, sizeof(current))) {
             puts("Later profile changes preserved; restoration skipped");
@@ -269,7 +356,7 @@ int main(int argc, char **argv) {
     }
     if (current.allow_su || visible((int)uid)) { puts("No visibility change needed"); return 0; }
     if (saved) { errno = EBUSY; fail("Profile changed since automatic setup; preserve user choice"); }
-    memcpy(state.magic, "OOSVIS3", 8);
+    memcpy(state.magic, "OOSVIS4", 8);
     state.original = current;
     save_state(path, state);
     write_profile(applied(current));
