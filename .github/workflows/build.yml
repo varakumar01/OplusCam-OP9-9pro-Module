@@ -101,18 +101,14 @@ jobs:
           app=$(python3 -c "import json; print(json.load(open('aox/manifest.json'))['app_version'])")
           latest=false
           [ "$GITHUB_REF" = refs/heads/main ] && latest=true
-          # This camera's earlier releases, and the other camera's current one.
+          # This camera's earlier releases.
           tags=$(gh release list --limit 100 --json tagName --jq '.[].tagName' | grep -E '^v.*-build[0-9]+$' || true)
           if [ "$latest" = true ]; then
-            old=$(echo "$tags" | grep -v -- '-cam4-' || true); other=$(echo "$tags" | grep -- '-cam4-' | head -n 1 || true); other_name="Camera 4"
+            old=$(echo "$tags" | grep -v -- '-cam4-' || true)
           else
-            old=$(echo "$tags" | grep -- '-cam4-' || true); other=$(echo "$tags" | grep -v -- '-cam4-' | head -n 1 || true); other_name="Camera 5"
+            old=$(echo "$tags" | grep -- '-cam4-' || true)
           fi
           {
-            if [ -n "$other" ]; then
-              echo "**Looking for $other_name?** It is a separate download: [$other]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$other)"
-              echo
-            fi
             echo "OplusCamera $app for the OnePlus 9 / 9 Pro on crDroid, module $VERSION,"
             echo "built from \`${GITHUB_SHA::7}\` ($(git log -1 --format=%s))."
             echo
