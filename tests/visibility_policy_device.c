@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
         int fd = open(recovery_path, O_RDONLY|O_NOFOLLOW);
         if (fd < 0 || read(fd, &original, sizeof(original)) != sizeof(original)) fail("Read original");
         close(fd);
-        if (strcmp(original.key, package) || original.current_uid != uid || original.allow_su || original.version != KSU_APP_PROFILE_VER) return 2;
+        if (strcmp(original.key, package) || original.curr_uid != uid || original.allow_su || !known_version(original.version)) return 2;
         write_profile(original);
         struct app_profile actual = read_profile(package, uid);
         if (memcmp(&actual, &original, sizeof(actual))) fail("Recover original");

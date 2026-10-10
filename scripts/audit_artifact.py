@@ -112,13 +112,12 @@ def audit(archive_path, identifiers):
             if set(entry) != {"path", "label", "sha256", "size"}:
                 errors.append("Native manifest contains collection or unknown fields")
         if "visibility-source.json" in names:
-            from prepare_visibility import REVISION
+            from prepare_visibility import PROFILE_VERSIONS
             source = json.loads(archive.read("visibility-source.json"))
-            if set(source) != {"status", "repository", "revision", "profile_abi", "headers", "source_sha256", "binary_sha256", "notes"}:
+            if set(source) != {"profile_versions", "source_sha256", "binary_sha256", "notes"}:
                 errors.append("Unexpected visibility provenance fields")
-            if (source.get("revision") != REVISION or source.get("profile_abi") != 3 or
-                    source.get("repository") != "https://github.com/KernelSU-Next/KernelSU-Next"):
-                errors.append("Visibility UAPI revision mismatch")
+            if source.get("profile_versions") != PROFILE_VERSIONS:
+                errors.append("Visibility profile versions mismatch")
             if "ksu-visibility" not in names or hashlib.sha256(archive.read("ksu-visibility")).hexdigest() != source.get("binary_sha256"):
                 errors.append("Visibility helper checksum mismatch")
             if not {"service.sh", "visibility.sh", "uninstall.sh"}.issubset(names):
